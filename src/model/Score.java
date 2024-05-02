@@ -11,5 +11,5 @@ public class Score {
     public String getScoreId() {
         return scoreId;
     }
-
+    깃테스트;
 }
