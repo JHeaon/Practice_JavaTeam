@@ -52,6 +52,7 @@ public class CampManagementApplication {
     private static void setInitData() {
         enrollmentStore = new ArrayList<>();
         studentStore = new ArrayList<>();
+        scoreStore = new ArrayList<>();
         subjectStore = List.of(
                 new Subject(
                         sequence(INDEX_TYPE_SUBJECT),
@@ -99,7 +100,6 @@ public class CampManagementApplication {
                         SUBJECT_TYPE_CHOICE
                 )
         );
-        scoreStore = new ArrayList<>();
     }
 
     // index 자동 증가
@@ -265,6 +265,7 @@ public class CampManagementApplication {
     private static void createScore() {
         String studentId = getStudentId(); // 관리할 수강생 고유 번호
         System.out.println("시험 점수를 등록합니다...");
+
         // 기능 구현
         System.out.println("\n점수 등록 성공!");
     }
@@ -285,6 +286,19 @@ public class CampManagementApplication {
         System.out.println("회차별 등급을 조회합니다...");
         // 기능 구현
         System.out.println("\n등급 조회 성공!");
+    }
+
+    private static Enrollment searchEnrollment(String studentId) {
+        Enrollment enrollment = new Enrollment();
+
+        for(Enrollment object : enrollmentStore) {
+            if(object.getStudent().getStudentId().equals(studentId)){
+                enrollment = object;
+                break;
+            }
+        }
+
+        return enrollment;
     }
 
 }
