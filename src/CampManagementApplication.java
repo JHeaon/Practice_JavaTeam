@@ -1,8 +1,11 @@
+import model.Enrollment;
 import model.Score;
 import model.Student;
 import model.Subject;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Scanner;
 
@@ -16,6 +19,7 @@ import java.util.Scanner;
  */
 public class CampManagementApplication {
     // 데이터 저장소
+    private static List<Enrollment> enrollmentStore;
     private static List<Student> studentStore;
     private static List<Subject> subjectStore;
     private static List<Score> scoreStore;
@@ -46,6 +50,7 @@ public class CampManagementApplication {
 
     // 초기 데이터 생성
     private static void setInitData() {
+        enrollmentStore = new ArrayList<>();
         studentStore = new ArrayList<>();
         subjectStore = List.of(
                 new Subject(
@@ -124,7 +129,7 @@ public class CampManagementApplication {
             System.out.println("2. 점수 관리");
             System.out.println("3. 프로그램 종료");
             System.out.print("관리 항목을 선택하세요...");
-            int input = sc.nextInt();
+            int input = Integer.parseInt(sc.nextLine());
 
             switch (input) {
                 case 1 -> displayStudentView(); // 수강생 관리
@@ -148,7 +153,7 @@ public class CampManagementApplication {
             System.out.println("2. 수강생 목록 조회");
             System.out.println("3. 메인 화면 이동");
             System.out.print("관리 항목을 선택하세요...");
-            int input = sc.nextInt();
+            int input = Integer.parseInt(sc.nextLine());
 
             switch (input) {
                 case 1 -> createStudent(); // 수강생 등록
@@ -166,11 +171,50 @@ public class CampManagementApplication {
     private static void createStudent() {
         System.out.println("\n수강생을 등록합니다...");
         System.out.print("수강생 이름 입력: ");
-        String studentName = sc.next();
-        // 기능 구현 (필수 과목, 선택 과목)
+        String studentName = sc.nextLine();
 
+        // 기능 구현 (필수 과목, 선택 과목 선택하기)
         Student student = new Student(sequence(INDEX_TYPE_STUDENT), studentName); // 수강생 인스턴스 생성 예시 코드
-        // 기능 구현
+        ArrayList<Subject> subjects = new ArrayList<Subject>();
+
+        int mandatoryCount = 0;
+        int choiceCount = 0;
+
+        System.out.println("3개 이상의 필수과목, 2개 이상의 선택과목을 선택해주세요.");
+
+        while((mandatoryCount < 3) || (choiceCount < 2)) {
+
+            System.out.println("목록");
+
+            for(int i = 0; i < subjectStore.size(); i++) {
+                String subjectName = subjectStore.get(i).getSubjectName();
+                String subjectType = subjectStore.get(i).getSubjectType();
+                System.out.println(i + " : " + subjectName + " (" + subjectType + ")");
+            }
+
+            System.out.print("선택하세요 : ");
+            int input = Integer.parseInt(sc.nextLine());
+
+            String subjectType = subjectStore.get(input).getSubjectType();
+
+            if(subjectType.equals(SUBJECT_TYPE_MANDATORY)){
+                mandatoryCount++;
+            }
+            else if(subjectType.equals(SUBJECT_TYPE_CHOICE)){
+                choiceCount++;
+            }
+
+            subjects.add(subjectStore.get(input));
+            System.out.println(mandatoryCount + " " + choiceCount);
+        }
+
+        // 수강생 저장하기
+        studentStore.add(student);
+        Enrollment enrollment = new Enrollment();
+        enrollment.setStudent(student);
+        enrollment.setSubjectStore(subjects);
+        enrollmentStore.add(enrollment);
+
         System.out.println("수강생 등록 성공!\n");
     }
 
