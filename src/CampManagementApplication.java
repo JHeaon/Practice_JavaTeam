@@ -1,11 +1,8 @@
-import model.Enrollment;
 import model.Score;
 import model.Student;
 import model.Subject;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Scanner;
 
@@ -19,7 +16,6 @@ import java.util.Scanner;
  */
 public class CampManagementApplication {
     // 데이터 저장소
-    private static List<Enrollment> enrollmentStore;
     private static List<Student> studentStore;
     private static List<Subject> subjectStore;
     private static List<Score> scoreStore;
@@ -50,7 +46,6 @@ public class CampManagementApplication {
 
     // 초기 데이터 생성
     private static void setInitData() {
-        enrollmentStore = new ArrayList<>();
         studentStore = new ArrayList<>();
         scoreStore = new ArrayList<>();
         subjectStore = List.of(
@@ -208,13 +203,6 @@ public class CampManagementApplication {
             System.out.println(mandatoryCount + " " + choiceCount);
         }
 
-        // 수강생 저장하기
-        studentStore.add(student);
-        Enrollment enrollment = new Enrollment();
-        enrollment.setStudent(student);
-        enrollment.setSubjectStore(subjects);
-        enrollmentStore.add(enrollment);
-
         System.out.println("수강생 등록 성공!\n");
     }
 
@@ -222,11 +210,7 @@ public class CampManagementApplication {
     private static void inquireStudent() {
         System.out.println("\n수강생 목록을 조회합니다...\n");
         // 기능 구현
-        for(Enrollment enrollment : enrollmentStore) {
-            Student student = enrollment.getStudent();
-            System.out.println("고유번호 : " + student.getStudentId());
-            System.out.println("이름 : " + student.getStudentName());
-        }
+
 
         System.out.println("\n수강생 목록 조회 성공!");
     }
@@ -288,17 +272,6 @@ public class CampManagementApplication {
         System.out.println("\n등급 조회 성공!");
     }
 
-    private static Enrollment searchEnrollment(String studentId) {
-        Enrollment enrollment = new Enrollment();
 
-        for(Enrollment object : enrollmentStore) {
-            if(object.getStudent().getStudentId().equals(studentId)){
-                enrollment = object;
-                break;
-            }
-        }
-
-        return enrollment;
-    }
 
 }
