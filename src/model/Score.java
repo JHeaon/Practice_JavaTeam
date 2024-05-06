@@ -1,38 +1,19 @@
 package model;
 
+import java.util.HashMap;
+
 public class Score {
     private final String scoreId;
+    private String subjectId;
     private String studentId;
-    private int round;
-    private String scoreNumber;
-    private String scoreGrade;
+    private String grade;
+    private HashMap<Integer, Integer> roundGrade;
 
-    public Score(String seq) {
+    public Score(String seq, String studentId, String subjectId) {
         this.scoreId = seq;
-    }
-
-    public int getRound() {
-        return round;
-    }
-
-    public void setRound(int round) {
-        this.round = round;
-    }
-
-    public String getScoreNumber() {
-        return scoreNumber;
-    }
-
-    public void setScoreNumber(String scoreNumber) {
-        this.scoreNumber = scoreNumber;
-    }
-
-    public String getScoreGrade() {
-        return scoreGrade;
-    }
-
-    public void setScoreGrade(String scoreGrade) {
-        this.scoreGrade = scoreGrade;
+        this.studentId = studentId;
+        this.subjectId = subjectId;
+        this.roundGrade= new HashMap<>();
     }
 
     public String getScoreId() {
@@ -43,8 +24,76 @@ public class Score {
         return studentId;
     }
 
+    public String getGrade(){
+        return grade;
+    }
+
+    public String getSubjectId() {
+        return subjectId;
+    }
+
     public void setStudentId(String studentId) {
         this.studentId = studentId;
+    }
+
+
+    public void setSubjectId(String subjectId) {
+        this.subjectId = subjectId;
+    }
+
+    public void setRoundGrade(String subjectType, int round, int point){
+        this.roundGrade.put(round, point);
+        this.grade = calculateGrade(subjectType, point);
+    }
+
+    private String calculateGrade(String subjectType, int point){
+
+        String grade = "";
+
+        if(subjectType.equals("MANDATORY")){
+            if(point >= 95){
+                grade = "A";
+            }
+            else if(point >= 90){
+                grade = "B";
+            }
+            else if(point >= 80){
+                grade = "C";
+            }
+            else if(point >= 70){
+                grade = "D";
+            }
+            else if(point >= 60){
+                grade = "F";
+            }
+            else{
+                grade = "N";
+            }
+        }
+
+        else if(subjectType.equals("CHOICE")){
+            if(point >= 90){
+                grade = "A";
+            }
+            else if(point >= 80){
+                grade = "B";
+            }
+            else if(point >= 70){
+                grade = "C";
+            }
+            else if(point >= 60){
+                grade = "D";
+            }
+            else if(point >= 50){
+                grade = "F";
+            }
+            else{
+                grade = "N";
+            }
+        }
+
+
+        return grade;
     }
 
 }

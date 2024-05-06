@@ -233,7 +233,7 @@ public class CampManagementApplication {
             System.out.println("3. 수강생의 특정 과목 회차별 등급 조회");
             System.out.println("4. 메인 화면 이동");
             System.out.print("관리 항목을 선택하세요...");
-            int input = sc.nextInt();
+            int input = Integer.parseInt(sc.nextLine());
 
             switch (input) {
                 case 1 -> createScore(); // 수강생의 과목별 시험 회차 및 점수 등록
@@ -250,7 +250,19 @@ public class CampManagementApplication {
 
     private static String getStudentId() {
         System.out.print("\n관리할 수강생의 번호를 입력하시오...");
-        return sc.next();
+        return sc.nextLine();
+    }
+
+    private static Student getStudent(String studentId){
+        Student studentData = null;
+
+        for(Student student : studentStore) {
+            if(student.getStudentId().equals(studentId)){
+                studentData = student;
+            }
+        }
+
+        return studentData;
     }
 
     // 수강생의 과목별 시험 회차 및 점수 등록
@@ -259,6 +271,30 @@ public class CampManagementApplication {
         System.out.println("시험 점수를 등록합니다...");
 
         // 기능 구현
+        Student student = getStudent(studentId);
+        Subject subject;
+
+        System.out.println("입력하고자 하는 과목을 선택해주세요.");
+        for(int i = 0; i < student.getSubjectList().size(); i++){
+            System.out.println(i + ". " + student.getSubjectList().get(i).getSubjectName());
+        }
+        System.out.print("입력 : ");
+        int subjectChoice = Integer.parseInt(sc.nextLine());
+
+        subject = student.getSubjectList().get(subjectChoice);
+
+        Score score = new Score((sequence(INDEX_TYPE_SCORE)), studentId, subject.getSubjectId());
+
+        // TODO : 회차, 점수에 따른 오류처리
+        System.out.print("회차를 입력해주세요 (1 ~ 10) : ");
+        int round = Integer.parseInt(sc.nextLine());
+
+        System.out.print("점수를 입력해주세요 (0 ~ 100 ) : ");
+        int point = Integer.parseInt(sc.nextLine());
+
+        score.setRoundGrade(subject.getSubjectType(), round, point);
+        scoreStore.add(score);
+
         System.out.println("\n점수 등록 성공!");
     }
 
@@ -267,6 +303,7 @@ public class CampManagementApplication {
         String studentId = getStudentId(); // 관리할 수강생 고유 번호
         // 기능 구현 (수정할 과목 및 회차, 점수)
         System.out.println("시험 점수를 수정합니다...");
+
         // 기능 구현
         System.out.println("\n점수 수정 성공!");
     }
@@ -280,6 +317,10 @@ public class CampManagementApplication {
         System.out.println("\n등급 조회 성공!");
     }
 
+
+    private static void validateValue(){
+
+    }
 
 
 }
