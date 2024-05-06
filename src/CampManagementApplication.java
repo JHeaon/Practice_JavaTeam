@@ -14,6 +14,7 @@ import java.util.Scanner;
  * 프로젝트 구조를 변경하거나 기능을 추가해도 괜찮습니다!
  * 구현에 도움을 주기위한 Base 프로젝트입니다. 자유롭게 이용해주세요!
  */
+
 public class CampManagementApplication {
     // 데이터 저장소
     private static List<Student> studentStore;
@@ -170,7 +171,6 @@ public class CampManagementApplication {
 
         // 기능 구현 (필수 과목, 선택 과목 선택하기)
         Student student = new Student(sequence(INDEX_TYPE_STUDENT), studentName); // 수강생 인스턴스 생성 예시 코드
-        ArrayList<Subject> subjects = new ArrayList<Subject>();
 
         int mandatoryCount = 0;
         int choiceCount = 0;
@@ -179,7 +179,7 @@ public class CampManagementApplication {
 
         while((mandatoryCount < 3) || (choiceCount < 2)) {
 
-            System.out.println("목록");
+            System.out.println("목록 " + "(필수과목 : " + mandatoryCount + " , "+ "선택과목 : " + choiceCount + ")");
 
             for(int i = 0; i < subjectStore.size(); i++) {
                 String subjectName = subjectStore.get(i).getSubjectName();
@@ -199,8 +199,7 @@ public class CampManagementApplication {
                 choiceCount++;
             }
 
-            subjects.add(subjectStore.get(input));
-            System.out.println(mandatoryCount + " " + choiceCount);
+            student.setSubjectList(subjectStore.get(input));
         }
 
         System.out.println("수강생 등록 성공!\n");
@@ -210,8 +209,6 @@ public class CampManagementApplication {
     private static void inquireStudent() {
         System.out.println("\n수강생 목록을 조회합니다...\n");
         // 기능 구현
-
-
         System.out.println("\n수강생 목록 조회 성공!");
     }
 

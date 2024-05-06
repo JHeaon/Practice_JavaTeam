@@ -5,12 +5,12 @@ import java.util.ArrayList;
 public class Student {
     private String studentId;
     private String studentName;
-    private ArrayList<String> subjectList;
+    private ArrayList<Subject> subjectList;
 
     public Student(String seq, String studentName) {
         this.studentId = seq;
         this.studentName = studentName;
-        this.subjectList = new ArrayList<String>();
+        this.subjectList = new ArrayList<Subject>();
     }
 
     // Getter
@@ -22,13 +22,13 @@ public class Student {
         return studentName;
     }
 
-    public ArrayList<String> getSubjectList() {
+    public ArrayList<Subject> getSubjectList() {
         return subjectList;
     }
 
     // Setter
-    public void setSubjectList(String subjectName) {
-        this.subjectList.add(subjectName);
+    public void setSubjectList(Subject subject) {
+        this.subjectList.add(subject);
     }
 
 }
