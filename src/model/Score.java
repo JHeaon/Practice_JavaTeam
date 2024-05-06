@@ -1,19 +1,19 @@
 package model;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 
 public class Score {
     private final String scoreId;
     private String subjectId;
     private String studentId;
-    private String grade;
     private HashMap<Integer, Integer> roundGrade;
 
     public Score(String seq, String studentId, String subjectId) {
         this.scoreId = seq;
         this.studentId = studentId;
         this.subjectId = subjectId;
-        this.roundGrade= new HashMap<>();
+        this.roundGrade= new LinkedHashMap<>();
     }
 
     public String getScoreId() {
@@ -24,13 +24,15 @@ public class Score {
         return studentId;
     }
 
-    public String getGrade(){
-        return grade;
-    }
 
     public String getSubjectId() {
         return subjectId;
     }
+
+    public HashMap<Integer, Integer> getRoundGrade() {
+        return roundGrade;
+    }
+
 
     public void setStudentId(String studentId) {
         this.studentId = studentId;
@@ -43,10 +45,9 @@ public class Score {
 
     public void setRoundGrade(String subjectType, int round, int point){
         this.roundGrade.put(round, point);
-        this.grade = calculateGrade(subjectType, point);
     }
 
-    private String calculateGrade(String subjectType, int point){
+    public String calculateGrade(String subjectType, int point){
 
         String grade = "";
 

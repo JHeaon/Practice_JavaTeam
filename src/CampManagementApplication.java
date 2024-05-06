@@ -3,6 +3,7 @@ import model.Student;
 import model.Subject;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Scanner;
 
@@ -272,7 +273,6 @@ public class CampManagementApplication {
 
         // 기능 구현
         Student student = getStudent(studentId);
-        Subject subject;
 
         System.out.println("입력하고자 하는 과목을 선택해주세요.");
         for(int i = 0; i < student.getSubjectList().size(); i++){
@@ -281,19 +281,46 @@ public class CampManagementApplication {
         System.out.print("입력 : ");
         int subjectChoice = Integer.parseInt(sc.nextLine());
 
-        subject = student.getSubjectList().get(subjectChoice);
+        Subject subject = student.getSubjectList().get(subjectChoice);
 
-        Score score = new Score((sequence(INDEX_TYPE_SCORE)), studentId, subject.getSubjectId());
-
-        // TODO : 회차, 점수에 따른 오류처리
+        // TODO : 이미 등록, 회차, 점수에 따른 처리 해줘야함
         System.out.print("회차를 입력해주세요 (1 ~ 10) : ");
         int round = Integer.parseInt(sc.nextLine());
+        if (round < 1 || round > 10) {
+            System.out.println("유효하지 않은 회차입니다. 1부터 10까지의 숫자를 입력해주세요.");
+            return; // 함수 종료
+        }
 
         System.out.print("점수를 입력해주세요 (0 ~ 100 ) : ");
         int point = Integer.parseInt(sc.nextLine());
+        if (point < 0 || point > 100) {
+            System.out.println("유효하지 않은 점수입니다. 0부터 100까지의 숫자를 입력해주세요.");
+            return; // 함수 종료
+        }
 
-        score.setRoundGrade(subject.getSubjectType(), round, point);
-        scoreStore.add(score);
+        Score score = null;
+
+        boolean scoreAlreadyExists = false;
+
+        for (Score element : scoreStore) {
+            if (element.getSubjectId().equals(subject.getSubjectId()) && element.getStudentId().equals(student.getStudentId())) {
+                if (element.getRoundGrade().containsKey(round)) {
+                    System.out.println("이미 점수가 등록되어 있는 과목입니다.");
+                    scoreAlreadyExists = true;
+                    break;
+                } else {
+                    element.setRoundGrade(subject.getSubjectType(), round, point);
+                    scoreAlreadyExists = true;
+                    break;
+                }
+            }
+        }
+
+        if (!scoreAlreadyExists) {
+            score = new Score(sequence(INDEX_TYPE_SCORE), studentId, subject.getSubjectId());
+            score.setRoundGrade(subject.getSubjectType(), round, point);
+            scoreStore.add(score);
+        }
 
         System.out.println("\n점수 등록 성공!");
     }
@@ -301,8 +328,49 @@ public class CampManagementApplication {
     // 수강생의 과목별 회차 점수 수정
     private static void updateRoundScoreBySubject() {
         String studentId = getStudentId(); // 관리할 수강생 고유 번호
+        Student student = getStudent(studentId);
+
         // 기능 구현 (수정할 과목 및 회차, 점수)
         System.out.println("시험 점수를 수정합니다...");
+        System.out.println("수정을 원하는 과목을 선택하세요.\n");
+
+        for(int i = 0; i < student.getSubjectList().size(); i++){
+            System.out.println(i + ". " + student.getSubjectList().get(i).getSubjectName());
+        }
+        System.out.print("입력 : ");
+        int subjectChoice = Integer.parseInt(sc.nextLine());
+
+        Subject subject = student.getSubjectList().get(subjectChoice);
+        String subjectId = subject.getSubjectId();
+        Score score = null;
+
+        for(Score element : scoreStore) {
+            if(element.getSubjectId().equals(subjectId) && element.getStudentId().equals(studentId)){
+                score = element;
+            }
+        }
+
+        if(score == null){
+            System.out.println("수정하고자 하는 과목의 점수가 존재하지 않습니다.");
+            return;
+        }
+        else{
+            System.out.print("회차를 입력해주세요 (1 ~ 10) : ");
+            int round = Integer.parseInt(sc.nextLine());
+            if (round < 1 || round > 10) {
+                System.out.println("유효하지 않은 회차입니다. 1부터 10까지의 숫자를 입력해주세요.");
+                return;
+            }
+
+            System.out.print("점수를 입력해주세요 (0 ~ 100 ) : ");
+            int point = Integer.parseInt(sc.nextLine());
+            if (point < 0 || point > 100) {
+                System.out.println("유효하지 않은 점수입니다. 0부터 100까지의 숫자를 입력해주세요.");
+                return;
+            }
+
+            score.setRoundGrade(subject.getSubjectType(), round, point);
+        }
 
         // 기능 구현
         System.out.println("\n점수 수정 성공!");
@@ -311,16 +379,44 @@ public class CampManagementApplication {
     // 수강생의 특정 과목 회차별 등급 조회
     private static void inquireRoundGradeBySubject() {
         String studentId = getStudentId(); // 관리할 수강생 고유 번호
+        Student student = getStudent(studentId);
+
         // 기능 구현 (조회할 특정 과목)
         System.out.println("회차별 등급을 조회합니다...");
+        System.out.println("조회할 과목을 선택하세요.");
+        for(int i = 0; i < student.getSubjectList().size(); i++){
+            System.out.println(i + ". " + student.getSubjectList().get(i).getSubjectName());
+        }
+        System.out.print("입력 : ");
+        int subjectChoice = Integer.parseInt(sc.nextLine());
+
+        Subject subject = student.getSubjectList().get(subjectChoice);
+        String subjectId = subject.getSubjectId();
+        Score score = null;
+
+        for(Score element : scoreStore) {
+            if(element.getSubjectId().equals(subjectId) && element.getStudentId().equals(studentId)){
+                score = element;
+            }
+        }
+
+        if(score == null){
+            System.out.println("해당 과목의 점수가 존재하지 않습니다.");
+            return;
+        }
+        else{
+            HashMap<Integer, Integer> roundGrade = score.getRoundGrade();
+            System.out.println("과목명 : " + subject.getSubjectName());
+            for(int key : roundGrade.keySet()){
+                System.out.println("회차 : " + key);
+                System.out.println("등급 : " + score.calculateGrade(subject.getSubjectType(), roundGrade.get(key)));
+            }
+
+        }
+
+
         // 기능 구현
         System.out.println("\n등급 조회 성공!");
     }
-
-
-    private static void validateValue(){
-
-    }
-
 
 }
