@@ -202,6 +202,7 @@ public class CampManagementApplication {
             student.setSubjectList(subjectStore.get(input));
         }
 
+        studentStore.add(student);
         System.out.println("수강생 등록 성공!\n");
     }
 
@@ -209,7 +210,17 @@ public class CampManagementApplication {
     private static void inquireStudent() {
         System.out.println("\n수강생 목록을 조회합니다...\n");
         // 기능 구현
-        System.out.println("\n수강생 목록 조회 성공!");
+        for(Student student : studentStore) {
+            System.out.println("고유번호 : " + student.getStudentId());
+            System.out.println("이름 : " + student.getStudentName());
+//            System.out.print("수강목록 : ");
+//            for(Subject subject : student.getSubjectList()) {
+//                System.out.print(subject.getSubjectName() + " ");
+//            }
+//            System.out.println("\n");
+        }
+
+        System.out.println("수강생 목록 조회 성공!");
     }
 
     private static void displayScoreView() {
