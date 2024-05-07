@@ -167,11 +167,56 @@ public class CampManagementApplication {
         System.out.println("\n수강생을 등록합니다...");
         System.out.print("수강생 이름 입력: ");
         String studentName = sc.next();
-        // 기능 구현 (필수 과목, 선택 과목)
+        Student student = new Student(sequence(INDEX_TYPE_STUDENT), studentName); // 수강생 인스턴스 생성
 
-        Student student = new Student(sequence(INDEX_TYPE_STUDENT), studentName); // 수강생 인스턴스 생성 예시 코드
-        // 기능 구현
+        // 필수 과목, 선택 과목 등록
+        System.out.println("\n수강할 과목을 선택합니다...");
+        System.out.println("(필수과목: 최소 3개 이상, 선택과목: 최소 2개 이상)");
+        System.out.println("1. [필수과목] Java");
+        System.out.println("2. [필수과목] 객체지향");
+        System.out.println("3. [필수과목] Spring");
+        System.out.println("4. [필수과목] JPA");
+        System.out.println("5. [필수과목] MySQL");
+        System.out.println("6. [선택과목] 디자인 패턴");
+        System.out.println("7. [선택과목] Spring Security");
+        System.out.println("8. [선택과목] Redis");
+        System.out.println("9. [선택과목] MongoDB");
+        System.out.println("0. 과목 등록 종료");
+        int countMandatorySubject = 0, countChoiceSubject = 0;
+
+        while (true) {
+            System.out.println("\n등록된 과목 수 -> 필수과목: " + countMandatorySubject + ", 선택과목: " + countChoiceSubject);
+            System.out.print("수강할 과목을 선택하세요...");
+            int subjectNum = sc.nextInt();
+
+            if (subjectNum >= 1 && subjectNum <= 5) {
+                if (student.isInList(subjectStore.get(subjectNum - 1))) {
+                    System.out.println("이미 수강한 과목입니다...");
+                    continue;
+                }
+                student.setEnrolledCourses(subjectStore.get(subjectNum - 1));
+                countMandatorySubject++;
+            } else if (subjectNum >= 6 && subjectNum <= 9) {
+                if (student.isInList(subjectStore.get(subjectNum - 1))) {
+                    System.out.println("이미 수강한 과목입니다...");
+                    continue;
+                }
+                student.setEnrolledCourses(subjectStore.get(subjectNum - 1));
+                countChoiceSubject++;
+            } else if (subjectNum == 0) {
+                if (countMandatorySubject >= 3 && countChoiceSubject >= 2) {
+                    break;
+                } else {
+                    System.out.println("필수과목은 최소 3개 이상, 선택과목은 최소 2개 이상 등록해야합니다...");
+                    continue;
+                }
+            } else {
+                System.out.println("올바른 번호를 입력하세요...");
+            }
+        }
+
         studentStore.add(student);
+
         System.out.println("수강생 등록 성공!\n");
     }
 
