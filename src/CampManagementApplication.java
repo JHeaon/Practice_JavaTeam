@@ -270,12 +270,12 @@ public class CampManagementApplication {
 
         System.out.print("과목 번호 입력: ");
         String subjectId = sc.next();   // 시험 과목 고유 번호
-        System.out.print("\n시험 회차 입력: ");
+        System.out.print("시험 회차 입력: ");
         int round = sc.nextInt();   // 시험 회차
 
         Score score = new Score(studentId, subjectId, round);   // Score 인스턴스 생성
 
-        System.out.print("\n시험 점수 입력: ");
+        System.out.print("시험 점수 입력: ");
         int num = sc.nextInt();
         score.setScore(num);    // 시험 점수 저장
 
@@ -296,9 +296,32 @@ public class CampManagementApplication {
     // 수강생의 과목별 회차 점수 수정
     private static void updateRoundScoreBySubject() {
         String studentId = getStudentId(); // 관리할 수강생 고유 번호
-        // 기능 구현 (수정할 과목 및 회차, 점수)
         System.out.println("시험 점수를 수정합니다...");
-        // 기능 구현
+
+        System.out.print("과목 번호 입력: ");
+        String subjectId = sc.next();   // 시험 과목 고유 번호
+        System.out.print("시험 회차 입력: ");
+        int round = sc.nextInt();   // 시험 회차
+
+        for (Score value : scoreStore) {
+            if (Objects.equals(value.getStudentId(), studentId) && Objects.equals(value.getSubjectId(), subjectId) && Objects.equals(value.getTestRound(), round)) {
+                System.out.print("시험 점수 입력: ");
+                int num = sc.nextInt();
+                value.setScore(num);    // 시험 점수 저장
+
+                String type = null;
+                for (Subject subject : subjectStore) {
+                    if (Objects.equals(subject.getSubjectId(), subjectId)) {
+                        type = subject.getSubjectType();
+                        break;
+                    }
+                }
+                value.setGrade(value.convertToGrade(num, type));    // 시험 등급 저장
+
+                break;
+            }
+        }
+
         System.out.println("\n점수 수정 성공!");
     }
 
