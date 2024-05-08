@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Student {
-    private String studentId;
-    private String studentName;
+    private final String studentId;
+    private final String studentName;
     private final List<Subject> enrolledCourses = new ArrayList<>();
 
     public Student(String seq, String studentName) {
@@ -27,5 +27,6 @@ public class Student {
     // Setter
     public void setEnrolledCourses(Subject course) { this.enrolledCourses.add(course); }
 
+    // 수강 과목 리스트에 주어진 과목의 존재 여부 판별
     public boolean isInList(Subject subject) { return this.enrolledCourses.contains(subject); }
 }

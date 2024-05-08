@@ -4,6 +4,7 @@ import model.Subject;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Scanner;
 
 /**
@@ -189,22 +190,22 @@ public class CampManagementApplication {
             System.out.print("수강할 과목을 선택하세요...");
             int subjectNum = sc.nextInt();
 
-            if (subjectNum >= 1 && subjectNum <= 5) {
+            if (subjectNum >= 1 && subjectNum <= 5) {       // 필수과목 선택
                 if (student.isInList(subjectStore.get(subjectNum - 1))) {
                     System.out.println("이미 수강한 과목입니다...");
                     continue;
                 }
                 student.setEnrolledCourses(subjectStore.get(subjectNum - 1));
                 countMandatorySubject++;
-            } else if (subjectNum >= 6 && subjectNum <= 9) {
+            } else if (subjectNum >= 6 && subjectNum <= 9) {    // 선택과목 선택
                 if (student.isInList(subjectStore.get(subjectNum - 1))) {
                     System.out.println("이미 수강한 과목입니다...");
                     continue;
                 }
                 student.setEnrolledCourses(subjectStore.get(subjectNum - 1));
                 countChoiceSubject++;
-            } else if (subjectNum == 0) {
-                if (countMandatorySubject >= 3 && countChoiceSubject >= 2) {
+            } else if (subjectNum == 0) {       // 과목 등록 종료
+                if (countMandatorySubject >= 3 && countChoiceSubject >= 2) {    // 등록한 과목의 개수 미달
                     break;
                 } else {
                     System.out.println("필수과목은 최소 3개 이상, 선택과목은 최소 2개 이상 등록해야합니다...");
@@ -215,7 +216,7 @@ public class CampManagementApplication {
             }
         }
 
-        studentStore.add(student);
+        studentStore.add(student);  // Student 요소 추가
 
         System.out.println("수강생 등록 성공!\n");
     }
@@ -223,10 +224,12 @@ public class CampManagementApplication {
     // 수강생 목록 조회
     private static void inquireStudent() {
         System.out.println("\n수강생 목록을 조회합니다...");
-        // 기능 구현
+
+        // 수강생 번호와 이름 출력
         for (Student value : studentStore) {
             System.out.println(value.getStudentId() + ": " + value.getStudentName());
         }
+
         System.out.println("\n수강생 목록 조회 성공!");
     }
 
@@ -264,7 +267,29 @@ public class CampManagementApplication {
     private static void createScore() {
         String studentId = getStudentId(); // 관리할 수강생 고유 번호
         System.out.println("시험 점수를 등록합니다...");
-        // 기능 구현
+
+        System.out.print("과목 번호 입력: ");
+        String subjectId = sc.next();   // 시험 과목 고유 번호
+        System.out.print("\n시험 회차 입력: ");
+        int round = sc.nextInt();   // 시험 회차
+
+        Score score = new Score(studentId, subjectId, round);   // Score 인스턴스 생성
+
+        System.out.print("\n시험 점수 입력: ");
+        int num = sc.nextInt();
+        score.setScore(num);    // 시험 점수 저장
+
+        String type = null;
+        for (Subject value : subjectStore) {
+            if (Objects.equals(value.getSubjectId(), subjectId)) {
+                type = value.getSubjectType();
+                break;
+            }
+        }
+        score.setGrade(score.convertToGrade(num, type));    // 시험 등급 저장
+
+        scoreStore.add(score);  // Score 요소 추가
+
         System.out.println("\n점수 등록 성공!");
     }
 
@@ -285,5 +310,4 @@ public class CampManagementApplication {
         // 기능 구현
         System.out.println("\n등급 조회 성공!");
     }
-
 }
