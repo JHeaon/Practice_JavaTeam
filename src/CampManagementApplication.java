@@ -304,25 +304,23 @@ public class CampManagementApplication {
         String subjectId = sc.next();   // 시험 과목 고유 번호
         System.out.print("시험 회차 입력: ");
         int round = sc.nextInt();   // 시험 회차
+        Score score = inquireScore(studentId, subjectId, round);    // 시험 점수
 
-        for (Score value : scoreStore) {
-            if (Objects.equals(value.getStudentId(), studentId) && Objects.equals(value.getSubjectId(), subjectId) && Objects.equals(value.getTestRound(), round)) {
-                System.out.print("시험 점수 입력: ");
-                int num = sc.nextInt();
-                value.setScore(num);    // 시험 점수 저장
+        // 시험 점수 저장
+        System.out.print("시험 점수 입력: ");
+        int num = sc.nextInt();
+        score.setScore(num);
 
-                String type = null;
-                for (Subject subject : subjectStore) {
-                    if (Objects.equals(subject.getSubjectId(), subjectId)) {
-                        type = subject.getSubjectType();
-                        break;
-                    }
-                }
-                value.setGrade(value.convertToGrade(num, type));    // 시험 등급 저장
 
+        // 시험 등급 저장
+        String type = null;
+        for (Subject subject : subjectStore) {
+            if (Objects.equals(subject.getSubjectId(), subjectId)) {
+                type = subject.getSubjectType();
                 break;
             }
         }
+        score.setGrade(score.convertToGrade(num, type));
 
         System.out.println("\n점수 수정 성공!");
     }
@@ -336,19 +334,21 @@ public class CampManagementApplication {
         String subjectId = sc.next();   // 시험 과목 고유 번호
         System.out.print("시험 회차 입력: ");
         int round = sc.nextInt();   // 시험 회차
+        Score score = inquireScore(studentId, subjectId, round);    // 시험 점수
 
-        for (Score value : scoreStore) {
-            if (Objects.equals(value.getStudentId(), studentId) && Objects.equals(value.getSubjectId(), subjectId) && Objects.equals(value.getTestRound(), round)) {
-                System.out.println("\n수강생 번호: " + studentId);
-                System.out.println("과목 번호: " + subjectId);
-                System.out.println("시험 회차: " + round);
-                System.out.println("시험 점수: " + value.getScore());
-                System.out.println("시험 점수: " + value.getGrade());
-
-                break;
-            }
-        }
+        // 조회 결과 출력
+        System.out.println("\n수강생 번호: " + studentId);
+        System.out.println("과목 번호: " + subjectId);
+        System.out.println("시험 회차: " + round);
+        System.out.println("시험 점수: " + score.getScore());
+        System.out.println("시험 점수: " + score.getGrade());
 
         System.out.println("\n등급 조회 성공!");
+    }
+
+    // Score 인스턴스 검색
+    public static Score inquireScore(String studentId, String subjectId, int round) {
+        for (Score value : scoreStore) { if (Objects.equals(value.getStudentId(), studentId) && Objects.equals(value.getSubjectId(), subjectId) && Objects.equals(value.getTestRound(), round)) { return value; } }
+        return null;
     }
 }
