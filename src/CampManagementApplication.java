@@ -247,7 +247,7 @@ public class CampManagementApplication {
 
 
 
-    private static void displayScoreView() {
+    private static void displayScoreView() throws InterruptedException {
         boolean flag = true;
         while (flag) {
             System.out.println("==================================");
@@ -276,12 +276,6 @@ public class CampManagementApplication {
         System.out.print("\n관리할 수강생의 번호를 입력하시오...");
         return sc.nextLine();
     }
-    //관리할 수강생 이름
-    private static String getStudentName(){
-        System.out.println("\n관리할 수강생의 이름을 입력하세요...");
-        return sc.nextLine();
-    }
-
     private static Student getStudent(String studentId){
         Student studentData = null;
 
@@ -404,16 +398,7 @@ public class CampManagementApplication {
         System.out.println("\n점수 수정 성공!");
     }
     //학생의 상태 수정
-//    private static void modifystudentstatus(){
-//        String studentName = getStudentName(); //관리할 수강생의 이름
-//        Student student = getStudent(studentName);
-//
-//        System.out.println("수강생의 이름을 입력해주세요.");
-//        System.out.println("입력 : ");
-//        studentName = sc.nextLine();
-//        for(student : studen)
-//
-//    }
+
     // 수강생의 특정 과목 회차별 등급 조회
     private static void inquireRoundGradeBySubject() {
         String studentId = getStudentId(); // 관리할 수강생 고유 번호
