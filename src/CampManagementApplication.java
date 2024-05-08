@@ -2,6 +2,7 @@ import model.Score;
 import model.Student;
 import model.Subject;
 
+import javax.swing.plaf.nimbus.State;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -51,6 +52,7 @@ public class CampManagementApplication {
     private static void setInitData() {
         studentStore = new ArrayList<>();
         scoreStore = new ArrayList<>();
+        String[]stateStore = {"Yellow", "Green", "Red"};
         subjectStore = List.of(
                 new Subject(
                         sequence(INDEX_TYPE_SUBJECT),
@@ -142,7 +144,7 @@ public class CampManagementApplication {
         System.out.println("프로그램을 종료합니다.");
     }
 
-    private static void displayStudentView() {
+    private static void displayStudentView() throws InterruptedException {
         boolean flag = true;
         while (flag) {
             System.out.println("==================================");
@@ -166,23 +168,46 @@ public class CampManagementApplication {
     }
 
     // 수강생 등록
-    private static void createStudent() {
+    private static void createStudent() throws InterruptedException {
         System.out.println("\n수강생을 등록합니다...");
         System.out.print("수강생 이름 입력: ");
         String studentName = sc.nextLine();
 
-        Student student = new Student(sequence(INDEX_TYPE_STUDENT), studentName); // 수강생 인스턴스 생성 예시 코드
+        //수강생 상태 등록
+        System.out.println("\n 수강생 상태를 등록합니다.");
+        System.out.println("상태가좋으면 Green,보통이면 Yellow, 안좋으면 Red를 입력해주세요. ");
+        boolean flag = true;
+        String studentState="";
+        while(true){
+            String state = sc.nextLine();
+            if (state.equals("Yellow")) {
+                studentState = state;
+            } else if (state.equals("Red")) {
+                studentState = state;
+            } else if (state.equals("Green")) {
+                studentState = state;
+            } else {
+                System.out.println("잘못된 입력입니다. 처음화면으로 돌아갑니다.");
+                createStudent();
+                return;
+        }
+            Thread.sleep(1000);
+            System.out.println("입력이 완료되었습니다. 과목 선택화면으로 넘어갑니다.");
+            break;
+        }
 
+        Student student = new Student(sequence(INDEX_TYPE_STUDENT), studentName, studentState);// 수강생 인스턴스 생성 예시 코드
+        //과목 선택
         int mandatoryCount = 0;
         int choiceCount = 0;
 
         System.out.println("3개 이상의 필수과목, 2개 이상의 선택과목을 선택해주세요.");
 
-        while((mandatoryCount < 3) || (choiceCount < 2)) {
+        while ((mandatoryCount < 3) || (choiceCount < 2)) {
 
-            System.out.println("목록 " + "(필수과목 : " + mandatoryCount + " , "+ "선택과목 : " + choiceCount + ")");
+            System.out.println("목록 " + "(필수과목 : " + mandatoryCount + " , " + "선택과목 : " + choiceCount + ")");
 
-            for(int i = 0; i < subjectStore.size(); i++) {
+            for (int i = 0; i < subjectStore.size(); i++) {
                 String subjectName = subjectStore.get(i).getSubjectName();
                 String subjectType = subjectStore.get(i).getSubjectType();
                 System.out.println(i + " : " + subjectName + " (" + subjectType + ")");
@@ -193,36 +218,37 @@ public class CampManagementApplication {
 
             String subjectType = subjectStore.get(input).getSubjectType();
 
-            if(subjectType.equals(SUBJECT_TYPE_MANDATORY)){
+            if (subjectType.equals(SUBJECT_TYPE_MANDATORY)) {
                 mandatoryCount++;
-            }
-            else if(subjectType.equals(SUBJECT_TYPE_CHOICE)){
+            } else if (subjectType.equals(SUBJECT_TYPE_CHOICE)) {
                 choiceCount++;
             }
 
             student.setSubjectList(subjectStore.get(input));
         }
-
         studentStore.add(student);
         System.out.println("수강생 등록 성공!\n");
     }
 
+
     // 수강생 목록 조회
     private static void inquireStudent() {
-        System.out.println("\n수강생 목록을 조회합니다...\n");
+        System.out.println("\n수강생 목록을 전체 조회합니다...\n");
         // 기능 구현
         for(Student student : studentStore) {
             System.out.println("고유번호 : " + student.getStudentId());
             System.out.println("이름 : " + student.getStudentName());
-//            System.out.print("수강목록 : ");
-//            for(Subject subject : student.getSubjectList()) {
-//                System.out.print(subject.getSubjectName() + " ");
-//            }
-//            System.out.println("\n");
+            System.out.println("상태 : " + student.getStudentState());
+            System.out.print("수강목록 : ");
+            for(Subject subject : student.getSubjectList()) {
+                System.out.print(subject.getSubjectName() + " ");
+            }
+            System.out.println("\n");
         }
-
         System.out.println("수강생 목록 조회 성공!");
     }
+
+
 
     private static void displayScoreView() {
         boolean flag = true;
