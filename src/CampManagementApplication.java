@@ -225,17 +225,16 @@ public class CampManagementApplication {
     // 수강생 목록 조회  
     private static void inquireStudent() {
         System.out.println("\n수강생 목록을 조회합니다...\n");
-        // 기능 구현  
+        // 모든 수강생 정보 조회
         for(Student student : studentStore) {
             System.out.println("고유번호 : " + student.getStudentId());
             System.out.println("이름 : " + student.getStudentName());
-//            System.out.print("수강목록 : ");//            for(Subject subject : student.getSubjectList()) {
-//                System.out.print(subject.getSubjectName() + " ");
-//            }
-//            System.out.println("\n");
+            System.out.println("상태 : " + student.getStudentStatus());
+            System.out.print("수강 과목목록 : ");
+            for (Subject value : student.getSubjectList()) { System.out.print(value.getSubjectName() + " "); }
+            System.out.println();
         }
-
-        System.out.println("\n수강생 목록 조회 성공!");
+        System.out.println("수강생 목록 조회 성공!");
     }
 
     private static void displayScoreView() {
