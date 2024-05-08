@@ -272,23 +272,14 @@ public class CampManagementApplication {
 
         System.out.print("과목 번호 입력: ");
         String subjectId = sc.next();   // 시험 과목 고유 번호
-        System.out.print("시험 회차 입력: ");
-        int round = sc.nextInt();   // 시험 회차
 
-        Score score = new Score(studentId, subjectId, round);   // Score 인스턴스 생성
+        Score score = new Score(studentId, subjectId);  // Score 인스턴스 생성
 
         System.out.print("시험 점수 입력: ");
-        int num = sc.nextInt();
-        score.setScore(num);    // 시험 점수 저장
+        int num = sc.nextInt();     // 시험 점수
+        String type = inquireSubjectType(subjectId);    // 과목 타입 (필수과목 또는 선택과목)
 
-        String type = null;
-        for (Subject value : subjectStore) {
-            if (Objects.equals(value.getSubjectId(), subjectId)) {
-                type = value.getSubjectType();
-                break;
-            }
-        }
-        score.setGrade(score.convertToGrade(num, type));    // 시험 등급 저장
+        score.setScoreList(num, type);    // 시험 점수와 등급 저장
 
         scoreStore.add(score);  // Score 요소 추가
 
@@ -304,23 +295,13 @@ public class CampManagementApplication {
         String subjectId = sc.next();   // 시험 과목 고유 번호
         System.out.print("시험 회차 입력: ");
         int round = sc.nextInt();   // 시험 회차
-        Score score = inquireScore(studentId, subjectId, round);    // 시험 점수
+        Score score = inquireScore(studentId, subjectId);    // 수정하려는 시험 점수 인스턴스
 
-        // 시험 점수 저장
+        // 시험 점수 수정
         System.out.print("시험 점수 입력: ");
         int num = sc.nextInt();
-        score.setScore(num);
-
-
-        // 시험 등급 저장
-        String type = null;
-        for (Subject subject : subjectStore) {
-            if (Objects.equals(subject.getSubjectId(), subjectId)) {
-                type = subject.getSubjectType();
-                break;
-            }
-        }
-        score.setGrade(score.convertToGrade(num, type));
+        String type = inquireSubjectType(subjectId);
+        score.setScoreList(round, score.convertToGrade(num, type));
 
         System.out.println("\n점수 수정 성공!");
     }
@@ -334,21 +315,27 @@ public class CampManagementApplication {
         String subjectId = sc.next();   // 시험 과목 고유 번호
         System.out.print("시험 회차 입력: ");
         int round = sc.nextInt();   // 시험 회차
-        Score score = inquireScore(studentId, subjectId, round);    // 시험 점수
+        Score score = inquireScore(studentId, subjectId);    // 시험 점수
 
         // 조회 결과 출력
         System.out.println("\n수강생 번호: " + studentId);
         System.out.println("과목 번호: " + subjectId);
         System.out.println("시험 회차: " + round);
-        System.out.println("시험 점수: " + score.getScore());
-        System.out.println("시험 점수: " + score.getGrade());
+        System.out.println("시험 점수: " + score.getScoreList().get(round - 1).getScore());
+        System.out.println("시험 점수: " + score.getScoreList().get(round - 1).getGrade());
 
         System.out.println("\n등급 조회 성공!");
     }
 
     // Score 인스턴스 검색
-    public static Score inquireScore(String studentId, String subjectId, int round) {
-        for (Score value : scoreStore) { if (Objects.equals(value.getStudentId(), studentId) && Objects.equals(value.getSubjectId(), subjectId) && Objects.equals(value.getTestRound(), round)) { return value; } }
+    public static Score inquireScore(String studentId, String subjectId) {
+        for (Score value : scoreStore) { if (Objects.equals(value.getStudentId(), studentId) && Objects.equals(value.getSubjectId(), subjectId)) { return value; } }
+        return null;
+    }
+
+    // Subject 타입 검색
+    public static String inquireSubjectType(String subjectId) {
+        for (Subject value : subjectStore) { if (Objects.equals(value.getSubjectId(), subjectId)) { return value.getSubjectType(); } }
         return null;
     }
 }

@@ -1,16 +1,16 @@
 package model;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Score {
     private final String studentId;
     private final String subjectId;
-    private final int testRound;
-    private int score;
-    private String grade;
+    private final List<Grade> scoreList = new ArrayList<>();
 
-    public Score(String studentId, String subjectId, int testRound) {
+    public Score(String studentId, String subjectId) {
         this.studentId = studentId;
         this.subjectId = subjectId;
-        this.testRound = testRound;
     }
 
     // Getter
@@ -18,29 +18,21 @@ public class Score {
         return studentId;
     }
 
-    public String getSubjectId() {
-        return subjectId;
-    }
+    public String getSubjectId() { return subjectId; }
 
-    public int getTestRound() {
-        return testRound;
-    }
-
-    public int getScore() {
-        return score;
-    }
-
-    public String getGrade() {
-        return grade;
-    }
+    public List<Grade> getScoreList() { return scoreList; }
 
     // Setter
-    public void setScore(int score) {
-        this.score = score;
+    public void setScoreList(int score, String type) {
+        if (scoreList.size() <= 10) {
+            this.scoreList.add(new Grade(score, convertToGrade(score, type)));
+        } else {
+            System.out.println("시험을 10회 완료했습니다.");
+        }
     }
 
-    public void setGrade(String grade) {
-        this.grade = grade;
+    public void setScoreList(int score, String type, int round) {
+        this.scoreList.set((round - 1), new Grade(score, convertToGrade(score, type)));
     }
 
     // 점수를 등급으로 변환
