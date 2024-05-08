@@ -178,13 +178,10 @@ public class CampManagementApplication {
         System.out.println("상태가좋으면 Green,보통이면 Yellow, 안좋으면 Red를 입력해주세요. ");
         boolean flag = true;
         String studentState="";
+        //상태 데이터 입력
         while(true){
             String state = sc.nextLine();
-            if (state.equals("Yellow")) {
-                studentState = state;
-            } else if (state.equals("Red")) {
-                studentState = state;
-            } else if (state.equals("Green")) {
+            if (state.equals("Yellow")||state.equals("Red")||state.equals("Green")) {
                 studentState = state;
             } else {
                 System.out.println("잘못된 입력입니다. 처음화면으로 돌아갑니다.");
@@ -274,9 +271,14 @@ public class CampManagementApplication {
             }
         }
     }
-
+    //관리할 수강생의 이름
     private static String getStudentId() {
         System.out.print("\n관리할 수강생의 번호를 입력하시오...");
+        return sc.nextLine();
+    }
+    //관리할 수강생 이름
+    private static String getStudentName(){
+        System.out.println("\n관리할 수강생의 이름을 입력하세요...");
         return sc.nextLine();
     }
 
@@ -401,7 +403,17 @@ public class CampManagementApplication {
         // 기능 구현
         System.out.println("\n점수 수정 성공!");
     }
-
+    //학생의 상태 수정
+//    private static void modifystudentstatus(){
+//        String studentName = getStudentName(); //관리할 수강생의 이름
+//        Student student = getStudent(studentName);
+//
+//        System.out.println("수강생의 이름을 입력해주세요.");
+//        System.out.println("입력 : ");
+//        studentName = sc.nextLine();
+//        for(student : studen)
+//
+//    }
     // 수강생의 특정 과목 회차별 등급 조회
     private static void inquireRoundGradeBySubject() {
         String studentId = getStudentId(); // 관리할 수강생 고유 번호
