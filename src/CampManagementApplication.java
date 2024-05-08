@@ -7,14 +7,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Scanner;
 
-/**
- * Notification
- * Java, 객체지향이 아직 익숙하지 않은 분들은 위한 소스코드 틀입니다.
- * main 메서드를 실행하면 프로그램이 실행됩니다.
- * model 의 클래스들과 아래 (// 기능 구현...) 주석 부분을 완성해주세요!
- * 프로젝트 구조를 변경하거나 기능을 추가해도 괜찮습니다!
- * 구현에 도움을 주기위한 Base 프로젝트입니다. 자유롭게 이용해주세요!
- */
 
 public class CampManagementApplication {
     // 데이터 저장소
@@ -164,14 +156,27 @@ public class CampManagementApplication {
         }
     }
 
+
     // 수강생 등록
     private static void createStudent() {
         System.out.println("\n수강생을 등록합니다...");
         System.out.print("수강생 이름 입력: ");
         String studentName = sc.nextLine();
 
+        System.out.print("수강생 상태를 입력해주세요 (1. Green, 2. Yellow, 3. Red) :");
+        int studentStatusChoice = Integer.parseInt(sc.nextLine());
+        String studentStatus = "";
+
+        if(studentStatusChoice == 1){
+            studentStatus = "Green";
+        } else if (studentStatusChoice == 2){
+            studentStatus = "Yellow";
+        } else{
+            studentStatus = "Red";
+        }
+
         // 기능 구현 (필수 과목, 선택 과목 선택하기)
-        Student student = new Student(sequence(INDEX_TYPE_STUDENT), studentName); // 수강생 인스턴스 생성 예시 코드
+        Student student = new Student(sequence(INDEX_TYPE_STUDENT), studentName, studentStatus); // 수강생 인스턴스 생성 예시 코드
 
         int mandatoryCount = 0;
         int choiceCount = 0;
@@ -218,12 +223,15 @@ public class CampManagementApplication {
 //            for(Subject subject : student.getSubjectList()) {
 //                System.out.print(subject.getSubjectName() + " ");
 //            }
-//            System.out.println("\n");
+            System.out.println(" ");
         }
 
         System.out.println("수강생 목록 조회 성공!");
     }
 
+    // TODO : 추가 요구 사항
+    // TODO : 수강생의 과목별 평균 등급을 조회할 수 있습니다. 조회 형식은 자유입니다.
+    // TODO : 특정 상태 수강생들의 필수 과목 평균 등급을 조회합니다. 조회 형식은 자유입니다.
     private static void displayScoreView() {
         boolean flag = true;
         while (flag) {
@@ -232,7 +240,9 @@ public class CampManagementApplication {
             System.out.println("1. 수강생의 과목별 시험 회차 및 점수 등록");
             System.out.println("2. 수강생의 과목별 회차 점수 수정");
             System.out.println("3. 수강생의 특정 과목 회차별 등급 조회");
-            System.out.println("4. 메인 화면 이동");
+            System.out.println("4. 수강생 과목별 평균 등급 조회");
+            System.out.println("5. 특정 상태 수강생들의 필수 과목 평균 등급 조회");
+            System.out.println("6. 메인 화면 이동");
             System.out.print("관리 항목을 선택하세요...");
             int input = Integer.parseInt(sc.nextLine());
 
@@ -240,7 +250,9 @@ public class CampManagementApplication {
                 case 1 -> createScore(); // 수강생의 과목별 시험 회차 및 점수 등록
                 case 2 -> updateRoundScoreBySubject(); // 수강생의 과목별 회차 점수 수정
                 case 3 -> inquireRoundGradeBySubject(); // 수강생의 특정 과목 회차별 등급 조회
-                case 4 -> flag = false; // 메인 화면 이동
+                case 4 -> inquireAverageGradeBySubject(); // 과목별 평균 등급 조회
+                case 5 -> inquireAverageGradeBySubjectByStatus(); // 상태에 따른 평균 등급 조회
+                case 6 -> flag = false; // 메인 화면 이동
                 default -> {
                     System.out.println("잘못된 입력입니다.\n메인 화면 이동...");
                     flag = false;
@@ -299,7 +311,6 @@ public class CampManagementApplication {
         }
 
         Score score = null;
-
         boolean scoreAlreadyExists = false;
 
         for (Score element : scoreStore) {
@@ -409,14 +420,122 @@ public class CampManagementApplication {
             System.out.println("과목명 : " + subject.getSubjectName());
             for(int key : roundGrade.keySet()){
                 System.out.println("회차 : " + key);
-                System.out.println("등급 : " + score.calculateGrade(subject.getSubjectType(), roundGrade.get(key)));
+                System.out.println("등급 : " + Score.calculateGrade(subject.getSubjectType(), roundGrade.get(key)));
             }
 
         }
-
-
-        // 기능 구현
         System.out.println("\n등급 조회 성공!");
     }
 
+
+    private static void inquireAverageGradeBySubject() {
+        System.out.println("\n과목별 평균 등급을 조회합니다...");
+
+        // 과목별 점수 합산을 저장할 맵
+        HashMap<String, Integer> subjectTotalScores = new HashMap<>();
+        // 과목별 점수 개수를 저장할 맵
+        HashMap<String, Integer> subjectTotalCounts = new HashMap<>();
+
+        // 모든 점수 데이터를 반복하면서 과목별로 점수 합산 및 개수 카운트
+        for (Score score : scoreStore) {
+            String subjectId = score.getSubjectId();
+            Subject subject = getSubjectById(subjectId);
+            if (subject != null) {
+                // 해당 과목의 타입 (필수 과목인지 선택 과목인지)
+                String subjectType = subject.getSubjectType();
+                HashMap<Integer, Integer> roundGrade = score.getRoundGrade();
+
+                for (int key : roundGrade.keySet()) {
+                    // 각 회차별 점수를 가져옴
+                    int point = roundGrade.get(key);
+
+                    // 해당 과목의 점수 합산 및 개수 카운트 업데이트
+                    String subjectKey = subjectType + "_" + subject.getSubjectName();
+                    subjectTotalScores.put(subjectKey, subjectTotalScores.getOrDefault(subjectKey, 0) + point);
+                    subjectTotalCounts.put(subjectKey, subjectTotalCounts.getOrDefault(subjectKey, 0) + 1);
+                }
+            }
+        }
+
+        // 과목별로 평균 등급 출력
+        for (String subjectKey : subjectTotalScores.keySet()) {
+            int totalScore = subjectTotalScores.get(subjectKey);
+            int totalCount = subjectTotalCounts.get(subjectKey);
+            double average = (double) totalScore / totalCount;
+            System.out.println("과목명: " + subjectKey.split("_")[1] + ", 타입: " + subjectKey.split("_")[0] + ", 평균 등급: " + Score.calculateGrade(subjectKey.split("_")[0], (int)average));
+        }
+
+        System.out.println("\n평균 등급 조회 성공!");
+    }
+
+    // 과목 ID로 과목을 찾는 함수
+    private static Subject getSubjectById(String subjectId) {
+        for (Subject subject : subjectStore) {
+            if (subject.getSubjectId().equals(subjectId)) {
+                return subject;
+            }
+        }
+        return null;
+    }
+
+    private static void inquireAverageGradeBySubjectByStatus() {
+        System.out.println("\n특정 상태 수강생들의 필수 과목 평균 등급을 조회합니다...");
+
+        // 수강생의 이름과 필수 과목 평균 등급을 저장할 맵
+        HashMap<String, Double> studentAverageGrades = new HashMap<>();
+
+        System.out.print("수강생 상태를 입력해주세요 (1. Green, 2. Yellow, 3. Red) :");
+        int studentStatusChoice = Integer.parseInt(sc.nextLine());
+        String studentStatus = "";
+
+        if(studentStatusChoice == 1){
+            studentStatus = "Green";
+        } else if (studentStatusChoice == 2){
+            studentStatus = "Yellow";
+        } else{
+            studentStatus = "Red";
+        }
+
+
+        // 모든 수강생들 중 특정 상태의 수강생들을 필터링하여 처리
+        for (Student student : studentStore) {
+            // 특정 상태의 수강생일 경우에만 처리
+            if (student.getStatus().equalsIgnoreCase(studentStatus)) {
+                String studentName = student.getStudentName();
+                double averageGrade = calculateAverageGradeForStudent(student, SUBJECT_TYPE_MANDATORY);
+                studentAverageGrades.put(studentName, averageGrade);
+            }
+        }
+
+        // 수강생의 이름과 필수 과목 평균 등급을 출력
+        for (String studentName : studentAverageGrades.keySet()) {
+            double averageGrade = studentAverageGrades.get(studentName);
+            System.out.println("수강생 이름: " + studentName + ", 필수 과목 평균 등급: " + Score.calculateGrade("MANDATORY", (int)averageGrade));
+        }
+
+        System.out.println("\n평균 등급 조회 성공!");
+    }
+
+    // 특정 수강생의 필수 과목 평균 등급 계산 함수
+    private static double calculateAverageGradeForStudent(Student student, String subjectType) {
+        int totalScore = 0;
+        int totalCount = 0;
+
+        // 수강생이 수강한 필수 과목의 점수 합산 및 개수 카운트
+        for (Score score : scoreStore) {
+            if (score.getStudentId().equals(student.getStudentId())) {
+                Subject subject = getSubjectById(score.getSubjectId());
+                if (subject != null && subject.getSubjectType().equalsIgnoreCase(subjectType)) {
+                    HashMap<Integer, Integer> roundGrade = score.getRoundGrade();
+                    for (int key : roundGrade.keySet()) {
+                        totalScore += roundGrade.get(key);
+                        totalCount++;
+                    }
+                }
+            }
+        }
+
+        // 평균 등급 계산
+        return totalCount > 0 ? (double) totalScore / totalCount : 0.0;
+    }
 }
