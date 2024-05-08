@@ -37,6 +37,7 @@ public class CampManagementApplication {
     // 스캐너
     private static Scanner sc = new Scanner(System.in);
 
+
     public static void main(String[] args) {
         setInitData();
         try {
@@ -170,7 +171,6 @@ public class CampManagementApplication {
         System.out.print("수강생 이름 입력: ");
         String studentName = sc.nextLine();
 
-        // 기능 구현 (필수 과목, 선택 과목 선택하기)
         Student student = new Student(sequence(INDEX_TYPE_STUDENT), studentName); // 수강생 인스턴스 생성 예시 코드
 
         int mandatoryCount = 0;
