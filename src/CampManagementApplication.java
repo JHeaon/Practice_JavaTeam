@@ -301,7 +301,7 @@ public class CampManagementApplication {
         System.out.print("시험 점수 입력: ");
         int num = sc.nextInt();
         String type = inquireSubjectType(subjectId);
-        score.setScoreList(round, score.convertToGrade(num, type));
+        score.setScoreList(num, score.convertToGrade(num, type), round);
 
         System.out.println("\n점수 수정 성공!");
     }
