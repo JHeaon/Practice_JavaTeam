@@ -24,11 +24,6 @@ public class CampManagementApplication {
     private static String SUBJECT_TYPE_MANDATORY = "MANDATORY";
     private static String SUBJECT_TYPE_CHOICE = "CHOICE";
 
-    // 상태 타입
-    private static String STATUS_TYPE_GREEN = "GREEN";
-    private static String STATUS_TYPE_RED = "RED";
-    private static String STATUS_TYPE_YELLOW = "YELLOW";
-
     // index 관리 필드  
     private static int studentIndex;
     private static final String INDEX_TYPE_STUDENT = "ST";
@@ -159,7 +154,7 @@ public class CampManagementApplication {
 
             switch (input) {
                 case 1 -> createStudent(); // 수강생 등록  
-                case 2 -> createStudent(); // 수강생 정보 수정  
+                case 2 -> createStudent(); // 수강생 정보 수정
                 case 3 -> inquireStudent(); // 수강생 목록 조회  
                 case 4 -> flag = false; // 메인 화면 이동  
                 default -> {
@@ -174,9 +169,20 @@ public class CampManagementApplication {
     private static void createStudent() {
         System.out.println("\n수강생을 등록합니다...");
         System.out.print("수강생 이름 입력: ");
-        String studentName = sc.nextLine();
+        String studentName = sc.next();
+
+        // 수강생 상태 입력
+        System.out.println("상태 종류 ( 1: Green  2: Red  3: Yellow )");
         System.out.print("수강생 상태 입력: ");
-        String studentStatus = sc.nextLine();
+        int num = sc.nextInt();
+        sc.nextLine();
+        String studentStatus = null;
+        switch (num) {
+            case 1 -> studentStatus = "Green";
+            case 2 -> studentStatus = "Red";
+            case 3 -> studentStatus = "Yellow";
+            default -> System.out.println("올바른 번호를 입력하세요...");
+        }
 
         Student student = new Student(sequence(INDEX_TYPE_STUDENT), studentName, studentStatus); // 수강생 인스턴스 생성 예시 코드
 
