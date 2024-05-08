@@ -47,7 +47,7 @@ public class Score {
         this.roundGrade.put(round, point);
     }
 
-    public String calculateGrade(String subjectType, int point){
+    public static String calculateGrade(String subjectType, int point){
 
         String grade = "";
 
