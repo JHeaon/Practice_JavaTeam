@@ -4,8 +4,8 @@ import java.util.ArrayList;
 
 public class Student {
     private final String studentId;
-    private final String studentName;
-    private final String studentStatus;
+    private String studentName;
+    private String studentStatus;
     private final ArrayList<Subject> subjectList;
 
     public Student(String seq, String studentName, String studentStatus) {
@@ -33,6 +33,14 @@ public class Student {
     }
 
     // Setter
+    public void setStudentName(String newName) {
+        this.studentName = newName;
+    }
+
+    public void setStudentStatus(String newStatus) {
+        this.studentStatus = newStatus;
+    }
+
     public void setSubjectList(Subject subject) {
         this.subjectList.add(subject);
     }

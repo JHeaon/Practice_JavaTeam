@@ -2,10 +2,7 @@ import model.Score;
 import model.Student;
 import model.Subject;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 
 /**
  * Notification * Java, 객체지향이 아직 익숙하지 않은 분들은 위한 소스코드 틀입니다.  
@@ -154,7 +151,13 @@ public class CampManagementApplication {
 
             switch (input) {
                 case 1 -> createStudent(); // 수강생 등록  
-                case 2 -> createStudent(); // 수강생 정보 수정
+                case 2 -> {
+                    try {
+                        updateStudent(); // 수강생 정보 수정
+                    } catch (Exception e) {
+                        System.out.println(e.getMessage());
+                    }
+                }
                 case 3 -> inquireStudent(); // 수강생 목록 조회  
                 case 4 -> flag = false; // 메인 화면 이동  
                 default -> {
@@ -175,7 +178,7 @@ public class CampManagementApplication {
         System.out.println("상태 종류 ( 1: Green  2: Red  3: Yellow )");
         System.out.print("수강생 상태 입력: ");
         int num = sc.nextInt();
-        sc.nextLine();
+        sc.nextLine(); // 버퍼 내 개행 제거
         String studentStatus = null;
         switch (num) {
             case 1 -> studentStatus = "Green";
@@ -220,6 +223,35 @@ public class CampManagementApplication {
 
         studentStore.add(student);
         System.out.println("\n수강생 등록 성공!");
+    }
+
+    // 수강생 정보 수정
+    private static void updateStudent() throws IllegalArgumentException{
+        System.out.println("\n수강생 정보를 수정합니다...\n");
+        System.out.print("수정할 수강생 번호를 입력: ");
+        String studentId = sc.next();
+        sc.nextLine(); // 버퍼 내 개행 제거
+        // 입력받은 번호를 갖는 수강생 존재 여부 판별
+        if (Objects.equals(inquireStudentIndexById(studentId), -1)) { throw new IllegalArgumentException(studentId + "를 번호로 갖는 수강생이 존재하지 않습니다..."); }
+
+        // 고유 번호, 이름 중 수정할 정보 선택
+        System.out.println("정보 (1: 이름 수정,  2: 상태 수정)");
+        System.out.print("수정할 정보 입력: ");
+
+        // 정보 수정
+        switch (sc.nextInt()) {
+            case 1 -> {
+                System.out.print("수정할 이름 입력: ");
+                studentStore.get(inquireStudentIndexById(studentId)).setStudentName(sc.next());
+            }
+            case 2 -> {
+                System.out.print("수정할 상태 입력: ");
+                studentStore.get(inquireStudentIndexById(studentId)).setStudentStatus(sc.next());
+            }
+            default -> throw new IllegalArgumentException("올바른 번호를 입력하세요...");
+        }
+        sc.nextLine(); // 버퍼 내 개행 제거
+        System.out.println("\n수강생 정보 수정 성공!");
     }
 
     // 수강생 목록 조회  
@@ -432,4 +464,9 @@ public class CampManagementApplication {
         System.out.println("\n등급 조회 성공!");
     }
 
+    // 고유번호로 수강생 인스턴스 검색
+    public static int inquireStudentIndexById(String studentId) {
+        for (int i = 0; i < studentStore.size(); i++) { if (Objects.equals(studentStore.get(i).getStudentId(), studentId)) { return i; } }
+        return -1;
+    }
 }
