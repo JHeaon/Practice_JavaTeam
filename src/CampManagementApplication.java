@@ -161,7 +161,7 @@ public class CampManagementApplication {
                 }
                 case 3 -> {
                     try {
-                        deleteStudent(); // 수강생 정보 수정
+                        deleteStudent(); // 수강생 정보 삭제
                     } catch (Exception e) {
                         System.out.println(e.getMessage());
                     }
