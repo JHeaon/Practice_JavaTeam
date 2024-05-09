@@ -122,7 +122,7 @@ public class CampManagementApplication {
                 case 1 -> displayStudentView(); // 수강생 관리
                 case 2 -> displayScoreView(); // 점수 관리
                 case 3 -> flag = false; // 프로그램 종료
-                default -> { System.out.println("잘못된 입력입니다.\n되돌아갑니다!"); }
+                default -> System.out.println("잘못된 입력입니다.\n되돌아갑니다!");
             }
         }
         System.out.println("프로그램을 종료합니다.");
@@ -141,34 +141,10 @@ public class CampManagementApplication {
             int input = Integer.parseInt(sc.nextLine());
 
             switch (input) {
-                case 1 -> {
-                    try {
-                        createStudent(); // 수강생 등록
-                    } catch (Exception e) {
-                        System.out.println(e.getMessage());
-                    }
-                }
-                case 2 -> {
-                    try {
-                        updateStudent(); // 수강생 정보 수정
-                    } catch (Exception e) {
-                        System.out.println(e.getMessage());
-                    }
-                }
-                case 3 -> {
-                    try {
-                        deleteStudent(); // 수강생 정보 삭제
-                    } catch (Exception e) {
-                        System.out.println(e.getMessage());
-                    }
-                }
-                case 4 -> {
-                    try {
-                        inquireStudent(); // 수강생 목록 조회
-                    } catch (Exception e) {
-                        System.out.println(e.getMessage());
-                    }
-                }
+                case 1 -> createStudent(); // 수강생 등록
+                case 2 -> updateStudent(); // 수강생 정보 수정
+                case 3 -> deleteStudent(); // 수강생 정보 삭제
+                case 4 -> inquireStudent(); // 수강생 목록 조회
                 case 5 -> flag = false; // 메인 화면 이동
                 default -> {
                     System.out.println("잘못된 입력입니다.\n메인 화면 이동...");
@@ -179,7 +155,7 @@ public class CampManagementApplication {
     }
 
     // 수강생 등록
-    private static void createStudent() throws IllegalArgumentException {
+    private static void createStudent() {
         System.out.println("\n수강생을 등록합니다...");
 
         // 수강생 이름 입력
@@ -188,123 +164,170 @@ public class CampManagementApplication {
 
         // 수강생 상태 입력
         String studentState;
-        System.out.println("상태 종류 ( 1: Green(좋음)  2: Yellow(보통)  3: Red(나쁨) )");
-        System.out.print("수강생 상태 입력: ");
-
-        switch (sc.nextInt()) {
-            case 1 -> studentState = "Green";
-            case 2 -> studentState = "Yellow";
-            case 3 -> studentState = "Red";
-            default -> throw new IllegalArgumentException("올바른 번호를 입력하세요...");
+        while (true) {
+            System.out.println("상태 종류 ( 1: Green(좋음)  2: Yellow(보통)  3: Red(나쁨) )");
+            System.out.print("수강생 상태 입력: ");
+            // 잘못된 입력을 받을 시 예외처리
+            try {
+                switch (Integer.parseInt(sc.nextLine())) {
+                    case 1 -> studentState = "Green";
+                    case 2 -> studentState = "Yellow";
+                    case 3 -> studentState = "Red";
+                    default -> {
+                        System.out.println("올바른 번호를 입력하세요...");
+                        continue;
+                    }
+                }
+                break;
+            } catch (NumberFormatException e) {
+                System.out.println("숫자를 입력하세요...");
+            }
         }
-        sc.nextLine(); // 버퍼 내 개행 제거
-        Student student = new Student(sequence(INDEX_TYPE_STUDENT), studentName, studentState); // 수강생 인스턴스 생성
+
+        // 수강생 인스턴스 생성
+        Student student = new Student(sequence(INDEX_TYPE_STUDENT), studentName, studentState);
 
         //과목 선택
+        System.out.println("\n3개 이상의 필수과목, 2개 이상의 선택과목을 선택해주세요.");
         int mandatoryCount = 0, choiceCount = 0;
-
-        System.out.println("3개 이상의 필수과목, 2개 이상의 선택과목을 선택해주세요.");
-
         while (!(mandatoryCount == NUMBER_OF_MANDATORY_SUBJECTS && choiceCount == NUMBER_OF_CHOICE_SUBJECTS)) {
             // 선택 가능한 과목 출력
             System.out.println("목록 " + "(필수과목 : " + mandatoryCount + " , " + "선택과목 : " + choiceCount + ")");
-
             for (int i = 0; i < subjectStore.size(); i++) {
                 String subjectName = subjectStore.get(i).getSubjectName();
                 String subjectType = subjectStore.get(i).getSubjectType();
                 System.out.println(i + " : " + subjectName + " (" + subjectType + ")");
             }
             System.out.println("9 : 과목 등록 종료");
-
             // 등록할 과목 선택
-            System.out.print("\n선택하세요 : ");
+            try {
+                System.out.print("\n선택하세요 : ");
+                int input = Integer.parseInt(sc.nextLine());
 
-            int input = Integer.parseInt(sc.nextLine());
+                if (Objects.equals(input, 9))                          // '9'를 입력받았을 때 과목 등록 종료
+                    break;
+                if (input < 0 || input > subjectStore.size() + 1) {
+                    System.out.println("올바른 번호를 입력하세요...");         // 범위를 벗어난 번호 입력 시 다시 입력
+                    continue;
+                }
+                if (student.isInList(subjectStore.get(input))) {
+                    System.out.println("이미 등록한 과목입니다...");          // 등록된 과목일 시 다시 입력
+                    continue;
+                }
 
-            if (Objects.equals(input, 9)) { break; }    // '9'를 입력받았을 때 과목 등록 종료
-            if (input < 0 || input > 9) {
-                throw new IllegalArgumentException("올바른 번호를 입력하세요...");    // 범위를 벗어난 번호 입력 시 예외처리
-            }
-            if (student.isInList(subjectStore.get(input))) {    // 등록된 과목인지 확인
-                System.out.println("이미 등록한 과목입니다...");
-                continue;
-            }
-            String subjectType = subjectStore.get(input).getSubjectType();
+                String subjectType = subjectStore.get(input).getSubjectType();
 
-            if (Objects.equals(subjectType, SUBJECT_TYPE_MANDATORY)) {
-                mandatoryCount++;
-            }            if (Objects.equals(subjectType, SUBJECT_TYPE_CHOICE)) {
-                choiceCount++;
+                if (Objects.equals(subjectType, SUBJECT_TYPE_MANDATORY))
+                    mandatoryCount++;
+                if (Objects.equals(subjectType, SUBJECT_TYPE_CHOICE))
+                    choiceCount++;
+                student.setSubjectList(subjectStore.get(input));
+            } catch (NumberFormatException e) {
+                System.out.println("숫자를 입력하세요...");
             }
-            student.setSubjectList(subjectStore.get(input));
         }
+
+        // 수강생 리스트에 저장
         studentStore.add(student);
         System.out.println("\n수강생 등록 성공!");
     }
+
     // 수강생 정보 수정
-    private static void updateStudent() throws IllegalArgumentException{
-        System.out.println("\n수강생 정보를 수정합니다...\n");
-        System.out.print("수정할 수강생 번호를 입력: ");
-        String studentId = sc.next();
-        sc.nextLine(); // 버퍼 내 개행 제거
+    private static void updateStudent() {
+        System.out.println("\n수강생 정보를 수정합니다...");
+        String studentId;
 
         // 입력받은 번호를 갖는 수강생 존재 여부 판별
-        if (Objects.equals(inquireStudentIndexById(studentId), -1)) { throw new IllegalArgumentException(studentId + "를 번호로 갖는 수강생이 존재하지 않습니다..."); }
-
-        // 고유 번호, 이름 중 수정할 정보 선택
-        System.out.println("정보 (1: 이름 수정,  2: 상태 수정)");
-        System.out.print("수정할 정보 입력: ");
+        while (true) {
+            System.out.print("\n수정할 수강생 번호를 입력: ");
+            studentId = sc.next();
+            if (Objects.equals(inquireStudentIndexById(studentId), -1)) {
+                System.out.println(studentId + "를 번호로 갖는 수강생이 존재하지 않습니다...");
+                continue;
+            }
+            break;
+        }
 
         // 정보 수정
-        switch (sc.nextInt()) {
-            case 1 -> {
-                // 이름 수정
-                System.out.print("수정할 이름 입력: ");
-                studentStore.get(inquireStudentIndexById(studentId)).setStudentName(sc.next());
+        while (true) {
+            try {
+                // 고유 번호, 이름 중 수정할 정보 선택
+                System.out.println("정보 ( 1: 이름 수정  2: 상태 수정");
+                System.out.print("수정할 정보 입력: ");
+
+                switch (Integer.parseInt(sc.nextLine())) {
+                    case 1 -> {
+                        System.out.print("수정할 이름 입력: ");
+                        studentStore.get(inquireStudentIndexById(studentId)).setStudentName(sc.next());     // 이름 수정
+                    }
+                    case 2 -> {
+                        System.out.print("수정할 상태 입력: ");
+                        studentStore.get(inquireStudentIndexById(studentId)).setStudentState(sc.next());    // 상태 수정
+                    }
+                    default -> {
+                        System.out.println("올바른 번호를 입력하세요...");
+                        continue;
+                    }
+                }
+                break;
+            } catch (NumberFormatException e) {
+                System.out.println("숫자를 입력하세요...");
             }
-            case 2 -> {
-                // 상태 수정
-                System.out.print("수정할 상태 입력: ");
-                studentStore.get(inquireStudentIndexById(studentId)).setStudentState(sc.next());
-            }
-            default -> throw new IllegalArgumentException("올바른 번호를 입력하세요...");
         }
-        sc.nextLine(); // 버퍼 내 개행 제거
+
         System.out.println("\n수강생 정보 수정 성공!");
     }
     // 수강생 목록 삭제
-    private static void deleteStudent() throws IllegalArgumentException {
+    private static void deleteStudent() {
         System.out.println("\n수강생 정보를 삭제합니다...\n");
-        System.out.print("삭제할 수강생 번호를 입력: ");
-        String studentId = sc.next();
-        int studentIndex = inquireStudentIndexById(studentId);
-        sc.nextLine(); // 버퍼 내 개행 제거
+        String studentId;
+        int studentIndexById;
 
         // 입력받은 번호를 갖는 수강생 존재 여부 판별
-        if (Objects.equals(studentIndex, -1)) { throw new IllegalArgumentException(studentId + "를 번호로 갖는 수강생이 존재하지 않습니다..."); }
+        while (true) {
+            System.out.print("\n삭제할 수강생 번호를 입력: ");
+            studentId = sc.next();
+            studentIndexById = inquireStudentIndexById(studentId);
+            if (Objects.equals(studentIndexById, -1)) {
+                System.out.println(studentId + "를 번호로 갖는 수강생이 존재하지 않습니다...");
+                continue;
+            }
+            break;
+        }
 
         // 입력받은 번호를 갖는 수강생 정보 삭제
-        studentStore.remove(studentIndex);  // 수강생 리스트에서 삭제
-        scoreStore.removeIf(score -> Objects.equals(score.getStudentId(), studentId));  // 점수 리스트에서 삭제
+        studentStore.remove(studentIndexById);  // 수강생 리스트에서 삭제
+        String finalStudentId = studentId;
+        scoreStore.removeIf(score -> Objects.equals(score.getStudentId(), finalStudentId));  // 점수 리스트에서 삭제
 
         System.out.println("수강생 정보 삭제 성공!");
     }
     // 수강생 목록 조회
-    private static void inquireStudent() throws IllegalArgumentException {
+    private static void inquireStudent() {
         System.out.println("\n수강생 목록을 조회합니다...\n");
         // 조회 방법 선택
-        System.out.println("방법 (1: 모두 조회,  2: 'Green' 상태 조회,  3: 'Yellow' 상태 조회,  2: 'Red' 상태 조회)");
+        System.out.println("방법 (1: 모두 조회,  2: 'Green' 상태 조회,  3: 'Yellow' 상태 조회,  4: 'Red' 상태 조회)");
         System.out.print("수정할 정보 입력: ");
 
         // 조건에 따라 수강생 목록 조회
-        switch (sc.nextInt()) {
-            case 1 -> { printStudentByStatus("All"); }      // 모든 수강생 정보 조회
-            case 2 -> { printStudentByStatus("Green"); }    // 'Green' 상태 수강생 조회
-            case 3 -> { printStudentByStatus("Yellow"); }   // 'Yellow' 상태 수강생 조회
-            case 4 -> { printStudentByStatus("Red"); }      // 'Red' 상태 수강생 조회
-            default -> throw new IllegalArgumentException("올바른 번호를 입력하세요...");
+        while (true) {
+            try {
+                switch (Integer.parseInt(sc.nextLine())) {
+                    case 1 -> printStudentByStatus("All");      // 모든 수강생 정보 조회
+                    case 2 -> printStudentByStatus("Green");    // 'Green' 상태 수강생 조회
+                    case 3 -> printStudentByStatus("Yellow");   // 'Yellow' 상태 수강생 조회
+                    case 4 -> printStudentByStatus("Red");      // 'Red' 상태 수강생 조회
+                    default -> {
+                        System.out.println("올바른 번호를 입력하세요...");
+                        continue;
+                    }
+                }
+                break;
+            } catch (NumberFormatException e) {
+                System.out.println("숫자를 입력하세요...");
+            }
         }
-        sc.nextLine(); // 버퍼 내 개행 제거
+
         System.out.println("수강생 목록 조회 성공!");
     }
 
@@ -336,11 +359,13 @@ public class CampManagementApplication {
                 }
             }
         }
-    }    //관리할 수강생의 이름
+    }
+    //관리할 수강생의 이름
     private static String getStudentId() {
         System.out.print("\n관리할 수강생의 번호를 입력하시오...");
         return sc.nextLine();
-    }    private static Student getStudent(String studentId){
+    }
+    private static Student getStudent(String studentId){
         Student studentData = null;
 
         for(Student student : studentStore) {
@@ -601,12 +626,12 @@ public class CampManagementApplication {
 
 
     // 고유번호로 수강생 인스턴스 검색
-    public static int inquireStudentIndexById(String studentId) {
-        for (int i = 0; i < studentStore.size(); i++) { if (Objects.equals(studentStore.get(i).getStudentId(), studentId)) { return i; } }
+    private static int inquireStudentIndexById(String studentId) {
+        for (int i = 0; i < studentStore.size(); i++) if (Objects.equals(studentStore.get(i).getStudentId(), studentId)) return i;
         return -1;
     }
     // 수강생 정보 출력
-    public static void printStudentByStatus(String status) {
+    private static void printStudentByStatus(String status) {
         for(Student student : studentStore) {
             if (Objects.equals(student.getStudentState(), status) || Objects.equals(status, "All")) {
                 System.out.println("고유번호 : " + student.getStudentId());
