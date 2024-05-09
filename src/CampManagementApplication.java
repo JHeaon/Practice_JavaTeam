@@ -22,9 +22,11 @@ public class CampManagementApplication {
     private static int scoreIndex;
     private static final String INDEX_TYPE_SCORE = "SC";
 
-    // 타입별 과목 개수
+    // 과목 개수
     private static final int NUMBER_OF_MANDATORY_SUBJECTS = 5;
     private static final int NUMBER_OF_CHOICE_SUBJECTS = 4;
+    private static final int MIN_MANDATORY_SUBJECTS = 3;
+    private static final int MIN_CHOICE_SUBJECTS = 2;
 
     // 스캐너
     private static final Scanner sc = new Scanner(System.in);
@@ -191,37 +193,47 @@ public class CampManagementApplication {
         System.out.println("\n3개 이상의 필수과목, 2개 이상의 선택과목을 선택해주세요.");
         int mandatoryCount = 0, choiceCount = 0;
         while (!(mandatoryCount == NUMBER_OF_MANDATORY_SUBJECTS && choiceCount == NUMBER_OF_CHOICE_SUBJECTS)) {
-            // 선택 가능한 과목 출력
+            /**
+             *  선택 가능한 과목 출력
+             *  1번부터 9번까지는 등록할 수 있는 과목
+             *  0번은 과목 등록 종료
+             */
             System.out.println("목록 " + "(필수과목 : " + mandatoryCount + " , " + "선택과목 : " + choiceCount + ")");
             for (int i = 0; i < subjectStore.size(); i++) {
-                String subjectName = subjectStore.get(i).getSubjectName();
-                String subjectType = subjectStore.get(i).getSubjectType();
-                System.out.println(i + " : " + subjectName + " (" + subjectType + ")");
+                Subject subject = subjectStore.get(i);
+                System.out.println((i + 1) + " : " + subject.getSubjectName() + " (" + subject.getSubjectType() + ")");
             }
-            System.out.println("9 : 과목 등록 종료");
+            System.out.println("0 : 과목 등록 종료");
             // 등록할 과목 선택
             try {
                 System.out.print("\n선택하세요 : ");
                 int input = Integer.parseInt(sc.nextLine());
 
-                if (Objects.equals(input, 9))                          // '9'를 입력받았을 때 과목 등록 종료
+                if (Objects.equals(input, 0)) {                       // '0'을 입력받았을 때 과목 등록 종료
+                    if (mandatoryCount < MIN_MANDATORY_SUBJECTS || choiceCount < MIN_CHOICE_SUBJECTS) {     // 등록 과목 개수 확인
+                        System.out.println("3개 이상의 필수과목, 2개 이상의 선택과목을 선택해주세요...");
+                        continue;
+                    }
                     break;
-                if (input < 0 || input > subjectStore.size() + 1) {
+                }
+                if (input < 1 || input > subjectStore.size() + 1) {
                     System.out.println("올바른 번호를 입력하세요...");         // 범위를 벗어난 번호 입력 시 다시 입력
                     continue;
                 }
-                if (student.isInList(subjectStore.get(input))) {
+
+                Subject subject = subjectStore.get(input - 1);           // 입력받은 인덱스에 해당하는 과목
+
+                if (student.isInList(subject)) {
                     System.out.println("이미 등록한 과목입니다...");          // 등록된 과목일 시 다시 입력
                     continue;
                 }
 
-                String subjectType = subjectStore.get(input).getSubjectType();
+                switch (subject.getSubjectType()) {
+                    case SUBJECT_TYPE_MANDATORY -> mandatoryCount++;
+                    case SUBJECT_TYPE_CHOICE -> choiceCount++;
+                }
 
-                if (Objects.equals(subjectType, SUBJECT_TYPE_MANDATORY))
-                    mandatoryCount++;
-                if (Objects.equals(subjectType, SUBJECT_TYPE_CHOICE))
-                    choiceCount++;
-                student.setSubjectList(subjectStore.get(input));
+                student.setSubjectList(subject);
             } catch (NumberFormatException e) {
                 System.out.println("숫자를 입력하세요...");
             }
@@ -240,7 +252,7 @@ public class CampManagementApplication {
         // 입력받은 번호를 갖는 수강생 존재 여부 판별
         while (true) {
             System.out.print("\n수정할 수강생 번호를 입력: ");
-            studentId = sc.next();
+            studentId = sc.nextLine();
             if (Objects.equals(inquireStudentIndexById(studentId), -1)) {
                 System.out.println(studentId + "를 번호로 갖는 수강생이 존재하지 않습니다...");
                 continue;
@@ -258,11 +270,11 @@ public class CampManagementApplication {
                 switch (Integer.parseInt(sc.nextLine())) {
                     case 1 -> {
                         System.out.print("수정할 이름 입력: ");
-                        studentStore.get(inquireStudentIndexById(studentId)).setStudentName(sc.next());     // 이름 수정
+                        studentStore.get(inquireStudentIndexById(studentId)).setStudentName(sc.nextLine());     // 이름 수정
                     }
                     case 2 -> {
                         System.out.print("수정할 상태 입력: ");
-                        studentStore.get(inquireStudentIndexById(studentId)).setStudentState(sc.next());    // 상태 수정
+                        studentStore.get(inquireStudentIndexById(studentId)).setStudentState(sc.nextLine());    // 상태 수정
                     }
                     default -> {
                         System.out.println("올바른 번호를 입력하세요...");
@@ -286,7 +298,7 @@ public class CampManagementApplication {
         // 입력받은 번호를 갖는 수강생 존재 여부 판별
         while (true) {
             System.out.print("\n삭제할 수강생 번호를 입력: ");
-            studentId = sc.next();
+            studentId = sc.nextLine();
             studentIndexById = inquireStudentIndexById(studentId);
             if (Objects.equals(studentIndexById, -1)) {
                 System.out.println(studentId + "를 번호로 갖는 수강생이 존재하지 않습니다...");
