@@ -22,6 +22,10 @@ public class CampManagementApplication {
     private static int scoreIndex;
     private static final String INDEX_TYPE_SCORE = "SC";
 
+    // 타입별 과목 개수
+    private static final int NUMBER_OF_MANDATORY_SUBJECTS = 5;
+    private static final int NUMBER_OF_CHOICE_SUBJECTS = 4;
+
     // 스캐너
     private static final Scanner sc = new Scanner(System.in);
 
@@ -32,6 +36,7 @@ public class CampManagementApplication {
         } catch (Exception e) {
             System.out.println("\n오류 발생!\n프로그램을 종료합니다.");
         }    }
+
     // 초기 데이터 생성
     private static void setInitData() {
         studentStore = new ArrayList<>();
@@ -182,7 +187,7 @@ public class CampManagementApplication {
 
         System.out.println("3개 이상의 필수과목, 2개 이상의 선택과목을 선택해주세요.");
 
-        while (!(mandatoryCount == 5 && choiceCount == 4)) {
+        while (!(mandatoryCount == NUMBER_OF_MANDATORY_SUBJECTS && choiceCount == NUMBER_OF_CHOICE_SUBJECTS)) {
             // 선택 가능한 과목 출력
             System.out.println("목록 " + "(필수과목 : " + mandatoryCount + " , " + "선택과목 : " + choiceCount + ")");
 
