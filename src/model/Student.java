@@ -1,21 +1,45 @@
 package model;
 
-public class Student {
-    private String studentId;
-    private String studentName;
+import javax.swing.plaf.nimbus.State;
+import java.util.ArrayList;
+import java.util.Arrays;
 
-    public Student(String seq, String studentName) {
+public class Student {
+    private final String studentId;
+    private String studentName;
+    private String studentState;
+    private final ArrayList<Subject> subjectList;
+
+    public Student(String seq, String studentName, String studentState) {
         this.studentId = seq;
         this.studentName = studentName;
+        this.studentState = studentState;
+        this.subjectList = new ArrayList<Subject>();
     }
-
     // Getter
     public String getStudentId() {
         return studentId;
     }
-
     public String getStudentName() {
         return studentName;
     }
 
+    public String getStudentState() {
+        return studentState;
+    }
+    public ArrayList<Subject> getSubjectList() {
+        return subjectList;
+    }
+    // Setter
+    public void setStudentName(String newName) {
+        this.studentName = newName;
+    }
+    public void setSubjectList(Subject subject) {
+        this.subjectList.add(subject);
+    }
+    public void setStudentState(String studentState) {
+        this.studentState = studentState;
+    }
+    // 수강 과목 리스트에 주어진 과목의 존재 여부 판별
+    public boolean isInList(Subject subject) { return this.subjectList.contains(subject); }
 }
