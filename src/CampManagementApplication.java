@@ -35,7 +35,8 @@ public class CampManagementApplication {
             displayMainView();
         } catch (Exception e) {
             System.out.println("\n오류 발생!\n프로그램을 종료합니다.");
-        }    }
+        }
+    }
 
     // 초기 데이터 생성
     private static void setInitData() {
@@ -87,20 +88,25 @@ public class CampManagementApplication {
                         "MongoDB",
                         SUBJECT_TYPE_CHOICE
                 )
-        );    }
+        );
+    }
     // index 자동 증가
     private static String sequence(String type) {
         switch (type) {
             case INDEX_TYPE_STUDENT -> {
                 studentIndex++;
                 return INDEX_TYPE_STUDENT + studentIndex;
-            }            case INDEX_TYPE_SUBJECT -> {
+            }
+            case INDEX_TYPE_SUBJECT -> {
                 subjectIndex++;
                 return INDEX_TYPE_SUBJECT + subjectIndex;
-            }            default -> {
+            }
+            default -> {
                 scoreIndex++;
                 return INDEX_TYPE_SCORE + scoreIndex;
-            }        }    }
+            }
+        }
+    }
     private static void displayMainView() {
         boolean flag = true;
         while (flag) {
@@ -116,9 +122,10 @@ public class CampManagementApplication {
                 case 1 -> displayStudentView(); // 수강생 관리
                 case 2 -> displayScoreView(); // 점수 관리
                 case 3 -> flag = false; // 프로그램 종료
-                default -> {
-                    System.out.println("잘못된 입력입니다.\n되돌아갑니다!");
-                }            }        }        System.out.println("프로그램을 종료합니다.");
+                default -> { System.out.println("잘못된 입력입니다.\n되돌아갑니다!"); }
+            }
+        }
+        System.out.println("프로그램을 종료합니다.");
     }
     private static void displayStudentView() {
         boolean flag = true;
@@ -139,26 +146,37 @@ public class CampManagementApplication {
                         createStudent(); // 수강생 등록
                     } catch (Exception e) {
                         System.out.println(e.getMessage());
-                    }                }                case 2 -> {
+                    }
+                }
+                case 2 -> {
                     try {
                         updateStudent(); // 수강생 정보 수정
                     } catch (Exception e) {
                         System.out.println(e.getMessage());
-                    }                }                case 3 -> {
+                    }
+                }
+                case 3 -> {
                     try {
                         deleteStudent(); // 수강생 정보 삭제
                     } catch (Exception e) {
                         System.out.println(e.getMessage());
-                    }                }                case 4 -> {
+                    }
+                }
+                case 4 -> {
                     try {
                         inquireStudent(); // 수강생 목록 조회
                     } catch (Exception e) {
                         System.out.println(e.getMessage());
-                    }                }                case 5 -> flag = false; // 메인 화면 이동
+                    }
+                }
+                case 5 -> flag = false; // 메인 화면 이동
                 default -> {
                     System.out.println("잘못된 입력입니다.\n메인 화면 이동...");
                     flag = false;
-                }            }        }    }
+                }
+            }
+        }
+    }
 
     // 수강생 등록
     private static void createStudent() throws IllegalArgumentException {
@@ -195,7 +213,8 @@ public class CampManagementApplication {
                 String subjectName = subjectStore.get(i).getSubjectName();
                 String subjectType = subjectStore.get(i).getSubjectType();
                 System.out.println(i + " : " + subjectName + " (" + subjectType + ")");
-            }            System.out.println("9 : 과목 등록 종료");
+            }
+            System.out.println("9 : 과목 등록 종료");
 
             // 등록할 과목 선택
             System.out.print("\n선택하세요 : ");
@@ -242,12 +261,15 @@ public class CampManagementApplication {
                 // 이름 수정
                 System.out.print("수정할 이름 입력: ");
                 studentStore.get(inquireStudentIndexById(studentId)).setStudentName(sc.next());
-            }            case 2 -> {
+            }
+            case 2 -> {
                 // 상태 수정
                 System.out.print("수정할 상태 입력: ");
                 studentStore.get(inquireStudentIndexById(studentId)).setStudentState(sc.next());
-            }            default -> throw new IllegalArgumentException("올바른 번호를 입력하세요...");
-        }        sc.nextLine(); // 버퍼 내 개행 제거
+            }
+            default -> throw new IllegalArgumentException("올바른 번호를 입력하세요...");
+        }
+        sc.nextLine(); // 버퍼 내 개행 제거
         System.out.println("\n수강생 정보 수정 성공!");
     }
     // 수강생 목록 삭제
@@ -311,7 +333,10 @@ public class CampManagementApplication {
                 default -> {
                     System.out.println("잘못된 입력입니다.\n메인 화면 이동...");
                     flag = false;
-                }            }        }    }    //관리할 수강생의 이름
+                }
+            }
+        }
+    }    //관리할 수강생의 이름
     private static String getStudentId() {
         System.out.print("\n관리할 수강생의 번호를 입력하시오...");
         return sc.nextLine();
@@ -321,7 +346,9 @@ public class CampManagementApplication {
         for(Student student : studentStore) {
             if(student.getStudentId().equals(studentId)){
                 studentData = student;
-            }        }
+            }
+        }
+
         return studentData;
     }
     // 수강생의 과목별 시험 회차 및 점수 등록
@@ -335,7 +362,8 @@ public class CampManagementApplication {
         System.out.println("입력하고자 하는 과목을 선택해주세요.");
         for(int i = 0; i < student.getSubjectList().size(); i++){
             System.out.println(i + ". " + student.getSubjectList().get(i).getSubjectName());
-        }        System.out.print("입력 : ");
+        }
+        System.out.print("입력 : ");
         int subjectChoice = Integer.parseInt(sc.nextLine());
 
         Subject subject = student.getSubjectList().get(subjectChoice);
@@ -368,7 +396,9 @@ public class CampManagementApplication {
                     element.setRoundGrade(subject.getSubjectType(), round, point);
                     scoreAlreadyExists = true;
                     break;
-                }            }        }
+                }
+            }
+        }
         if (!scoreAlreadyExists) {
             score = new Score(sequence(INDEX_TYPE_SCORE), studentId, subject.getSubjectId());
             score.setRoundGrade(subject.getSubjectType(), round, point);
@@ -387,7 +417,8 @@ public class CampManagementApplication {
 
         for(int i = 0; i < student.getSubjectList().size(); i++){
             System.out.println(i + ". " + student.getSubjectList().get(i).getSubjectName());
-        }        System.out.print("입력 : ");
+        }
+        System.out.print("입력 : ");
         int subjectChoice = Integer.parseInt(sc.nextLine());
 
         Subject subject = student.getSubjectList().get(subjectChoice);
@@ -397,11 +428,14 @@ public class CampManagementApplication {
         for(Score element : scoreStore) {
             if(element.getSubjectId().equals(subjectId) && element.getStudentId().equals(studentId)){
                 score = element;
-            }        }
+            }
+        }
+
         if(score == null){
             System.out.println("수정하고자 하는 과목의 점수가 존재하지 않습니다.");
             return;
-        }        else{
+        }
+        else{
             System.out.print("회차를 입력해주세요 (1 ~ 10) : ");
             int round = Integer.parseInt(sc.nextLine());
             if (round < 1 || round > 10) {
@@ -414,6 +448,7 @@ public class CampManagementApplication {
                 System.out.println("유효하지 않은 점수입니다. 0부터 100까지의 숫자를 입력해주세요.");
                 return;
             }
+
             score.setRoundGrade(subject.getSubjectType(), round, point);
         }
         System.out.println("\n점수 수정 성공!");
@@ -428,7 +463,8 @@ public class CampManagementApplication {
         System.out.println("조회할 과목을 선택하세요.");
         for(int i = 0; i < student.getSubjectList().size(); i++){
             System.out.println(i + ". " + student.getSubjectList().get(i).getSubjectName());
-        }        System.out.print("입력 : ");
+        }
+        System.out.print("입력 : ");
         int subjectChoice = Integer.parseInt(sc.nextLine());
 
         Subject subject = student.getSubjectList().get(subjectChoice);
@@ -438,18 +474,22 @@ public class CampManagementApplication {
         for(Score element : scoreStore) {
             if(element.getSubjectId().equals(subjectId) && element.getStudentId().equals(studentId)){
                 score = element;
-            }        }
+            }
+        }
+
         if(score == null){
             System.out.println("해당 과목의 점수가 존재하지 않습니다.");
             return;
-        }        else{
+        }
+        else{
             HashMap<Integer, Integer> roundGrade = score.getRoundGrade();
             System.out.println("과목명 : " + subject.getSubjectName());
             for(int key : roundGrade.keySet()){
                 System.out.println("회차 : " + key);
                 System.out.println("등급 : " + Score.calculateGrade(subject.getSubjectType(), roundGrade.get(key)));
             }
-        }        System.out.println("\n등급 조회 성공!");
+        }
+        System.out.println("\n등급 조회 성공!");
     }
 
     private static void inquireAverageGradeBySubject() {
@@ -477,7 +517,10 @@ public class CampManagementApplication {
                     String subjectKey = subjectType + "_" + subject.getSubjectName();
                     subjectTotalScores.put(subjectKey, subjectTotalScores.getOrDefault(subjectKey, 0) + point);
                     subjectTotalCounts.put(subjectKey, subjectTotalCounts.getOrDefault(subjectKey, 0) + 1);
-                }            }        }
+                }
+            }
+        }
+
         // 과목별로 평균 등급 출력
         for (String subjectKey : subjectTotalScores.keySet()) {
             int totalScore = subjectTotalScores.get(subjectKey);
@@ -485,6 +528,7 @@ public class CampManagementApplication {
             double average = (double) totalScore / totalCount;
             System.out.println("과목명: " + subjectKey.split("_")[1] + ", 타입: " + subjectKey.split("_")[0] + ", 평균 등급: " + Score.calculateGrade(subjectKey.split("_")[0], (int)average));
         }
+
         System.out.println("\n평균 등급 조회 성공!");
     }
     // 과목 ID로 과목을 찾는 함수
@@ -492,7 +536,9 @@ public class CampManagementApplication {
         for (Subject subject : subjectStore) {
             if (subject.getSubjectId().equals(subjectId)) {
                 return subject;
-            }        }        return null;
+            }
+        }
+        return null;
     }
     private static void inquireAverageGradeBySubjectByStatus() {
         System.out.println("\n특정 상태 수강생들의 필수 과목 평균 등급을 조회합니다...");
@@ -519,12 +565,15 @@ public class CampManagementApplication {
                 String studentName = student.getStudentName();
                 double averageGrade = calculateAverageGradeForStudent(student, SUBJECT_TYPE_MANDATORY);
                 studentAverageGrades.put(studentName, averageGrade);
-            }        }
+            }
+        }
+
         // 수강생의 이름과 필수 과목 평균 등급을 출력
         for (String studentName : studentAverageGrades.keySet()) {
             double averageGrade = studentAverageGrades.get(studentName);
             System.out.println("수강생 이름: " + studentName + ", 필수 과목 평균 등급: " + Score.calculateGrade("MANDATORY", (int)averageGrade));
         }
+
         System.out.println("\n평균 등급 조회 성공!");
     }
     // 특정 수강생의 필수 과목 평균 등급 계산 함수
@@ -541,7 +590,11 @@ public class CampManagementApplication {
                     for (int key : roundGrade.keySet()) {
                         totalScore += roundGrade.get(key);
                         totalCount++;
-                    }                }            }        }
+                    }
+                }
+            }
+        }
+
         // 평균 등급 계산
         return totalCount > 0 ? (double) totalScore / totalCount : 0.0;
     }
@@ -562,4 +615,7 @@ public class CampManagementApplication {
                 System.out.print("수강 과목목록 : ");
                 for (Subject value : student.getSubjectList()) { System.out.print(value.getSubjectName() + " "); }
                 System.out.println("\n");
-            }        }    }}
+            }
+        }
+    }
+}
