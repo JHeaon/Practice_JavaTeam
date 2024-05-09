@@ -5,10 +5,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 public class Student {
-    private String studentId;
+    private final String studentId;
     private String studentName;
     private String studentState;
-    private ArrayList<Subject> subjectList;
+    private final ArrayList<Subject> subjectList;
 
     public Student(String seq, String studentName, String studentState) {
         this.studentId = seq;
@@ -35,6 +35,10 @@ public class Student {
     }
 
     // Setter
+    public void setStudentName(String newName) {
+        this.studentName = newName;
+    }
+
     public void setSubjectList(Subject subject) {
         this.subjectList.add(subject);
     }
