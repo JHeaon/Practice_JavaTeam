@@ -16,34 +16,30 @@ public class Student {
         this.studentState = studentState;
         this.subjectList = new ArrayList<Subject>();
     }
-
     // Getter
     public String getStudentId() {
         return studentId;
     }
-
     public String getStudentName() {
         return studentName;
     }
 
-
     public String getStudentState() {
         return studentState;
     }
-
     public ArrayList<Subject> getSubjectList() {
         return subjectList;
     }
-
     // Setter
     public void setStudentName(String newName) {
         this.studentName = newName;
     }
-
     public void setSubjectList(Subject subject) {
         this.subjectList.add(subject);
     }
     public void setStudentState(String studentState) {
         this.studentState = studentState;
     }
+    // 수강 과목 리스트에 주어진 과목의 존재 여부 판별
+    public boolean isInList(Subject subject) { return this.subjectList.contains(subject); }
 }
