@@ -144,8 +144,9 @@ public class CampManagementApplication {
             System.out.println("수강생 관리 실행 중...");
             System.out.println("1. 수강생 등록");
             System.out.println("2. 수강생 정보 수정");
-            System.out.println("3. 수강생 목록 조회");
-            System.out.println("4. 메인 화면 이동");
+            System.out.println("3. 수강생 정보 삭제");
+            System.out.println("4. 수강생 목록 조회");
+            System.out.println("5. 메인 화면 이동");
             System.out.print("관리 항목을 선택하세요...");
             int input = Integer.parseInt(sc.nextLine());
 
@@ -160,12 +161,19 @@ public class CampManagementApplication {
                 }
                 case 3 -> {
                     try {
+                        deleteStudent(); // 수강생 정보 수정
+                    } catch (Exception e) {
+                        System.out.println(e.getMessage());
+                    }
+                }
+                case 4 -> {
+                    try {
                         inquireStudent(); // 수강생 목록 조회
                     } catch (Exception e) {
                         System.out.println(e.getMessage());
                     }
                 }
-                case 4 -> flag = false; // 메인 화면 이동  
+                case 5 -> flag = false; // 메인 화면 이동
                 default -> {
                     System.out.println("잘못된 입력입니다.\n메인 화면 이동...");
                     flag = false;
@@ -225,8 +233,6 @@ public class CampManagementApplication {
             student.setSubjectList(subjectStore.get(input));
         }
 
-
-
         studentStore.add(student);
         System.out.println("\n수강생 등록 성공!");
     }
@@ -237,6 +243,7 @@ public class CampManagementApplication {
         System.out.print("수정할 수강생 번호를 입력: ");
         String studentId = sc.next();
         sc.nextLine(); // 버퍼 내 개행 제거
+
         // 입력받은 번호를 갖는 수강생 존재 여부 판별
         if (Objects.equals(inquireStudentIndexById(studentId), -1)) { throw new IllegalArgumentException(studentId + "를 번호로 갖는 수강생이 존재하지 않습니다..."); }
 
@@ -260,6 +267,24 @@ public class CampManagementApplication {
         }
         sc.nextLine(); // 버퍼 내 개행 제거
         System.out.println("\n수강생 정보 수정 성공!");
+    }
+
+    // 수강생 목록 삭제
+    private static void deleteStudent() throws IllegalArgumentException {
+        System.out.println("\n수강생 정보를 삭제합니다...\n");
+        System.out.print("삭제할 수강생 번호를 입력: ");
+        String studentId = sc.next();
+        int studentIndex = inquireStudentIndexById(studentId);
+        sc.nextLine(); // 버퍼 내 개행 제거
+
+        // 입력받은 번호를 갖는 수강생 존재 여부 판별
+        if (Objects.equals(studentIndex, -1)) { throw new IllegalArgumentException(studentId + "를 번호로 갖는 수강생이 존재하지 않습니다..."); }
+
+        // 입력받은 번호를 갖는 수강생 정보 삭제
+        studentStore.remove(studentIndex);  // 수강생 리스트에서 삭제
+        scoreStore.removeIf(score -> Objects.equals(score.getStudentId(), studentId));  // 점수 리스트에서 삭제
+
+        System.out.println("수강생 정보 삭제 성공!");
     }
 
     // 수강생 목록 조회  
