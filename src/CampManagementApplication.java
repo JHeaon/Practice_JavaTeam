@@ -184,11 +184,11 @@ public class CampManagementApplication {
     private static void createStudent() throws InterruptedException {
         System.out.println("\n수강생을 등록합니다...");
         System.out.print("수강생 이름 입력: ");
-        String studentName = sc.next();
+        String studentName = sc.nextLine();
 
         //수강생 상태 등록
-        System.out.println("\n 수강생 상태를 등록합니다.");
-        System.out.println("상태가좋으면 Green,보통이면 Yellow, 안좋으면 Red를 입력해주세요. ");
+        System.out.println("\n수강생 상태를 등록합니다.");
+        System.out.print("상태가좋으면 Green, 보통이면 Yellow, 안좋으면 Red를 입력해주세요. : ");
         String studentState="";
 
         //상태 데이터 입력
@@ -455,10 +455,8 @@ public class CampManagementApplication {
             score.setRoundGrade(subject.getSubjectType(), round, point);
         }
 
-        // 기능 구현  
         System.out.println("\n점수 수정 성공!");
     }
-    //학생의 상태 수정
 
     // 수강생의 특정 과목 회차별 등급 조회  
     private static void inquireRoundGradeBySubject() {
@@ -573,7 +571,7 @@ public class CampManagementApplication {
         // 모든 수강생들 중 특정 상태의 수강생들을 필터링하여 처리
         for (Student student : studentStore) {
             // 특정 상태의 수강생일 경우에만 처리
-            if (student.getStatus().equalsIgnoreCase(studentStatus)) {
+            if (student.getStudentState().equalsIgnoreCase(studentStatus)) {
                 String studentName = student.getStudentName();
                 double averageGrade = calculateAverageGradeForStudent(student, SUBJECT_TYPE_MANDATORY);
                 studentAverageGrades.put(studentName, averageGrade);
@@ -611,11 +609,8 @@ public class CampManagementApplication {
         // 평균 등급 계산
         return totalCount > 0 ? (double) totalScore / totalCount : 0.0;
     }
-}
 
-        // 기능 구현  
-        System.out.println("\n등급 조회 성공!");
-    }
+
 
     // 고유번호로 수강생 인스턴스 검색
     public static int inquireStudentIndexById(String studentId) {

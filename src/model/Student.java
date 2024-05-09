@@ -15,7 +15,6 @@ public class Student {
         this.studentName = studentName;
         this.studentState = studentState;
         this.subjectList = new ArrayList<Subject>();
-        this.Status = status;
     }
 
     // Getter
