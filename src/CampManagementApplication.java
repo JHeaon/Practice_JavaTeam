@@ -158,7 +158,13 @@ public class CampManagementApplication {
                         System.out.println(e.getMessage());
                     }
                 }
-                case 3 -> inquireStudent(); // 수강생 목록 조회  
+                case 3 -> {
+                    try {
+                        inquireStudent(); // 수강생 목록 조회
+                    } catch (Exception e) {
+                        System.out.println(e.getMessage());
+                    }
+                }
                 case 4 -> flag = false; // 메인 화면 이동  
                 default -> {
                     System.out.println("잘못된 입력입니다.\n메인 화면 이동...");
@@ -175,15 +181,15 @@ public class CampManagementApplication {
         String studentName = sc.next();
 
         // 수강생 상태 입력
-        System.out.println("상태 종류 ( 1: Green  2: Red  3: Yellow )");
+        System.out.println("상태 종류 ( 1: Green(좋음)  2: Yellow(보통)  3: Red(나쁨) )");
         System.out.print("수강생 상태 입력: ");
         int num = sc.nextInt();
         sc.nextLine(); // 버퍼 내 개행 제거
         String studentStatus = null;
         switch (num) {
             case 1 -> studentStatus = "Green";
-            case 2 -> studentStatus = "Red";
-            case 3 -> studentStatus = "Yellow";
+            case 2 -> studentStatus = "Yellow";
+            case 3 -> studentStatus = "Red";
             default -> System.out.println("올바른 번호를 입력하세요...");
         }
 
@@ -241,10 +247,12 @@ public class CampManagementApplication {
         // 정보 수정
         switch (sc.nextInt()) {
             case 1 -> {
+                // 이름 수정
                 System.out.print("수정할 이름 입력: ");
                 studentStore.get(inquireStudentIndexById(studentId)).setStudentName(sc.next());
             }
             case 2 -> {
+                // 상태 수정
                 System.out.print("수정할 상태 입력: ");
                 studentStore.get(inquireStudentIndexById(studentId)).setStudentStatus(sc.next());
             }
@@ -255,17 +263,23 @@ public class CampManagementApplication {
     }
 
     // 수강생 목록 조회  
-    private static void inquireStudent() {
+    private static void inquireStudent() throws IllegalArgumentException {
         System.out.println("\n수강생 목록을 조회합니다...\n");
-        // 모든 수강생 정보 조회
-        for(Student student : studentStore) {
-            System.out.println("고유번호 : " + student.getStudentId());
-            System.out.println("이름 : " + student.getStudentName());
-            System.out.println("상태 : " + student.getStudentStatus());
-            System.out.print("수강 과목목록 : ");
-            for (Subject value : student.getSubjectList()) { System.out.print(value.getSubjectName() + " "); }
-            System.out.println();
+
+        // 조회 방법 선택
+        System.out.println("방법 (1: 모두 조회,  2: 'Green' 상태 조회,  3: 'Yellow' 상태 조회,  2: 'Red' 상태 조회)");
+        System.out.print("수정할 정보 입력: ");
+
+        // 조건에 따라 수강생 목록 조회
+        switch (sc.nextInt()) {
+            case 1 -> { printStudentByStatus("All"); }      // 모든 수강생 정보 조회
+            case 2 -> { printStudentByStatus("Green"); }    // 'Green' 상태 수강생 조회
+            case 3 -> { printStudentByStatus("Yellow"); }   // 'Yellow' 상태 수강생 조회
+            case 4 -> { printStudentByStatus("Red"); }      // 'Red' 상태 수강생 조회
+            default -> throw new IllegalArgumentException("올바른 번호를 입력하세요...");
         }
+
+        sc.nextLine(); // 버퍼 내 개행 제거
         System.out.println("수강생 목록 조회 성공!");
     }
 
@@ -468,5 +482,19 @@ public class CampManagementApplication {
     public static int inquireStudentIndexById(String studentId) {
         for (int i = 0; i < studentStore.size(); i++) { if (Objects.equals(studentStore.get(i).getStudentId(), studentId)) { return i; } }
         return -1;
+    }
+
+    // 수강생 정보 출력
+    public static void printStudentByStatus(String status) {
+        for(Student student : studentStore) {
+            if (Objects.equals(student.getStudentStatus(), status) || Objects.equals(status, "All")) {
+                System.out.println("고유번호 : " + student.getStudentId());
+                System.out.println("이름 : " + student.getStudentName());
+                System.out.println("상태 : " + student.getStudentStatus());
+                System.out.print("수강 과목목록 : ");
+                for (Subject value : student.getSubjectList()) { System.out.print(value.getSubjectName() + " "); }
+                System.out.println("\n");
+            }
+        }
     }
 }
