@@ -248,12 +248,14 @@ public class CampManagementApplication {
     private static void updateStudent() {
         System.out.println("\n수강생 정보를 수정합니다...");
         String studentId;
+        int studentIndexById;
 
         // 입력받은 번호를 갖는 수강생 존재 여부 판별
         while (true) {
             System.out.print("\n수정할 수강생 번호를 입력: ");
             studentId = sc.nextLine();
-            if (Objects.equals(inquireStudentIndexById(studentId), -1)) {
+            studentIndexById = inquireStudentIndexById(studentId);
+            if (Objects.equals(studentIndexById, -1)) {
                 System.out.println(studentId + "를 번호로 갖는 수강생이 존재하지 않습니다...");
                 continue;
             }
@@ -270,11 +272,11 @@ public class CampManagementApplication {
                 switch (Integer.parseInt(sc.nextLine())) {
                     case 1 -> {
                         System.out.print("수정할 이름 입력: ");
-                        studentStore.get(inquireStudentIndexById(studentId)).setStudentName(sc.nextLine());     // 이름 수정
+                        studentStore.get(studentIndexById).setStudentName(sc.nextLine());     // 이름 수정
                     }
                     case 2 -> {
                         System.out.print("수정할 상태 입력: ");
-                        studentStore.get(inquireStudentIndexById(studentId)).setStudentState(sc.nextLine());    // 상태 수정
+                        studentStore.get(studentIndexById).setStudentState(sc.nextLine());    // 상태 수정
                     }
                     default -> {
                         System.out.println("올바른 번호를 입력하세요...");
