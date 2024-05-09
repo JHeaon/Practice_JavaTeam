@@ -11,8 +11,8 @@ public class CampManagementApplication {
     private static List<Score> scoreStore;
 
     // 과목 타입  
-    private static String SUBJECT_TYPE_MANDATORY = "MANDATORY";
-    private static String SUBJECT_TYPE_CHOICE = "CHOICE";
+    private static final String SUBJECT_TYPE_MANDATORY = "MANDATORY";
+    private static final String SUBJECT_TYPE_CHOICE = "CHOICE";
 
     // index 관리 필드  
     private static int studentIndex;
@@ -23,7 +23,7 @@ public class CampManagementApplication {
     private static final String INDEX_TYPE_SCORE = "SC";
 
     // 스캐너  
-    private static Scanner sc = new Scanner(System.in);
+    private static final Scanner sc = new Scanner(System.in);
 
     public static void main(String[] args) {
         setInitData();
@@ -181,25 +181,27 @@ public class CampManagementApplication {
 
 
     // 수강생 등록
-    private static void createStudent() throws InterruptedException {
+    private static void createStudent() throws IllegalArgumentException {
         System.out.println("\n수강생을 등록합니다...");
+
+        // 수강생 이름 입력
         System.out.print("수강생 이름 입력: ");
         String studentName = sc.nextLine();
 
-        //수강생 상태 등록
-        System.out.println("\n수강생 상태를 등록합니다.");
-        System.out.print("상태가좋으면 Green, 보통이면 Yellow, 안좋으면 Red를 입력해주세요. : ");
-        String studentState="";
-
-        //상태 데이터 입력
-        String state = sc.nextLine();
-        if (state.equals("Yellow")||state.equals("Red")||state.equals("Green")) {
-            studentState = state;
-        } else {
-            throw new InterruptedException("잘못된 입력입니다. 처음화면으로 돌아갑니다.");
+        // 수강생 상태 입력
+        String studentState;
+        System.out.println("상태 종류 ( 1: Green(좋음)  2: Yellow(보통)  3: Red(나쁨) )");
+        System.out.print("수강생 상태 입력: ");
+        switch (sc.nextInt()) {
+            case 1 -> studentState = "Green";
+            case 2 -> studentState = "Yellow";
+            case 3 -> studentState = "Red";
+            default -> throw new IllegalArgumentException("올바른 번호를 입력하세요...");
         }
 
-        Student student = new Student(sequence(INDEX_TYPE_STUDENT), studentName, studentState);// 수강생 인스턴스 생성 예시 코드
+        sc.nextLine(); // 버퍼 내 개행 제거
+        Student student = new Student(sequence(INDEX_TYPE_STUDENT), studentName, studentState); // 수강생 인스턴스 생성
+
         //과목 선택
         int mandatoryCount = 0;
         int choiceCount = 0;
